@@ -1,31 +1,150 @@
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import iconSiora from '../assets/icon-siora.svg';
+import { Users, ArrowRight } from '@phosphor-icons/react';
+
+// Tipagem dos dados do backend
+interface Turma {
+  disciplina_id: number;
+  disciplina_nome: string;
+  codigo_turma: string;
+  total_alunos: string;
+}
+
+interface User {
+  id: number;
+  nome: string;
+  email: string;
+  perfil: string;
+}
 
 export function DashboardProfessor() {
-  const navigate = useNavigate();
-  
-  const userData = localStorage.getItem('@siora:user');
-  const user = userData ? JSON.parse(userData) : null;
+  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [carregando, setCarregando] = useState<boolean>(true);
+  const [erro, setErro] = useState<string>('');
 
-  function handleLogout() {
+  const userString = localStorage.getItem('@siora:user');
+  const user: User | null = userString ? JSON.parse(userString) : null;
+
+  useEffect(() => {
+    // Proteção de rota: Redireciona se não for professor
+    if (!user || user.perfil !== 'PROFESSOR') {
+      window.location.href = '/login';
+      return;
+    }
+
+    async function fetchTurmas() {
+      try {
+        const response = await axios.get<Turma[]>(`http://localhost:3000/api/dashboard/professor/${user?.id}/turmas`);
+        setTurmas(response.data);
+      } catch (err) {
+        console.error(err);
+        setErro('Não foi possível carregar as turmas.');
+      } finally {
+        setCarregando(false);
+      }
+    }
+
+    fetchTurmas();
+  }, [user]);
+
+  function handleLogout(e: React.MouseEvent) {
+    e.preventDefault();
     localStorage.removeItem('@siora:user');
-    navigate('/login');
+    window.location.href = '/login';
   }
 
-  return (
-    <div className="flex flex-col h-screen items-center justify-center bg-slate-50 text-siora-dark">
-      <h1 className="text-4xl font-bold mb-2 text-siora-blue">
-        Olá, {user?.nome || 'Professor'}! 👨‍🏫
-      </h1>
-      <p className="text-lg text-slate-500 mb-8">
-        Bem-vindo ao seu painel docente.
-      </p>
+  // Pega o nome abreviado (Ex: "Prof. Heverton")
+  const nomeProfessor = user?.nome ? `Prof. ${user.nome.split(' ')[0]}` : 'Professor';
 
-      <button 
-        onClick={handleLogout}
-        className="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-      >
-        Sair do Sistema
-      </button>
+  return (
+    <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans">
+
+      {/* CABEÇALHO (TOPBAR) - Sem a pílula de progresso do aluno */}
+      <header className="flex justify-between items-center bg-white px-8 py-4 border-b border-slate-200 shadow-sm">
+        <img
+          src={iconSiora}
+          alt="Logo SIORA"
+          onClick={() => window.location.href = '/'} // Opcional: faz a logo voltar pra home
+          className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
+        />
+
+        {/* Espaçador flex para empurrar o perfil para a direita já que não tem a barra de progresso */}
+        <div className="flex-1"></div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end leading-tight">
+            <span className="font-semibold text-sm text-slate-700">Olá, {nomeProfessor}</span>
+            <button onClick={handleLogout} className="text-slate-400 text-xs hover:text-slate-600 transition-colors">
+              Sair
+            </button>
+          </div>
+          <div className="w-9 h-9 bg-slate-200 rounded-full flex-shrink-0"></div>
+        </div>
+      </header>
+
+      {/* CONTEÚDO PRINCIPAL */}
+      <main className="max-w-[1200px] mx-auto px-6 py-12">
+        <section className="mb-10">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Suas Turmas Ativas</h1>
+          <p className="text-slate-500 text-sm font-medium">Painel do Docente • Semestre 2026.1</p>
+        </section>
+
+        {/* FEEDBACK DE CARREGAMENTO / ERRO */}
+        {carregando && <p className="text-slate-500 animate-pulse font-medium">Carregando turmas...</p>}
+        {erro && <p className="text-red-500 font-medium">{erro}</p>}
+
+        {/* GRID DE TURMAS */}
+        {!carregando && !erro && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {turmas.map((turma) => {
+              // Mock de Semestre/Carga Horária apenas para igualar ao Figma visualmente
+              const infoExtraMock = turma.disciplina_nome.includes('Jogos')
+                ? '8º Semestre (68 h/68 Aulas)'
+                : '6º Semestre (68 h/68 Aulas)';
+
+              return (
+                <article
+                  key={turma.disciplina_id}
+                  className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  {/* Tag Superior */}
+                  <div className="bg-[#D1FAE5]/60 px-5 py-2.5 text-[10px] font-bold text-[#059669] uppercase tracking-wider border-b border-emerald-50">
+                    Bacharelado em Sistemas de Informação
+                  </div>
+
+                  {/* Corpo do Card */}
+                  <div className="p-6 flex-grow border-b border-slate-100">
+                    <h2 className="text-[1.15rem] font-bold text-slate-800 mb-2 leading-snug">
+                      {turma.disciplina_nome}
+                    </h2>
+                    <p className="text-[12px] text-slate-400 font-medium">
+                      Código: {turma.codigo_turma} • {infoExtraMock}
+                    </p>
+                  </div>
+
+                  {/* Rodapé (Alunos e Ação) */}
+                  <div className="px-6 py-4 flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-[#059669] text-xs font-bold">
+                      <Users size={18} weight="fill" />
+                      {turma.total_alunos} Alunos Matriculados
+                    </span>
+
+                    <button
+                      onClick={() => window.location.href = '/detalhes-disciplina-professor'}
+                      className="flex items-center gap-1 text-[#3B82F6] text-xs font-bold hover:text-blue-700 transition-colors"
+                    >
+                      Gerenciar Turma <ArrowRight size={14} weight="bold" />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+
+          </div>
+        )}
+      </main>
     </div>
   );
 }

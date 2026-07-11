@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login.js';
 import { DashboardAluno } from './pages/DashboardAluno.js';
 import { DashboardProfessor } from './pages/DashboardProfessor.js';
+import { DetalhesDisciplinaAluno } from './pages/DetalhesDisciplinaAluno';
+import { DetalhesDisciplinaProfessor } from './pages/DetalhesDisciplinaProfessor';
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard-aluno" element={<DashboardAluno />} />
         <Route path="/dashboard-professor" element={<DashboardProfessor />} />
+        <Route path="/detalhes-disciplina" element={<DetalhesDisciplinaAluno />} />
+        <Route path="/detalhes-disciplina-professor" element={<DetalhesDisciplinaProfessor />} />
       </Routes>
     </BrowserRouter>
   );

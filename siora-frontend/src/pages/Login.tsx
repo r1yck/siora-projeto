@@ -59,7 +59,7 @@ export function Login() {
       </div>
 
       {/* PAINEL DIREITO: Formulário de Login */}
-      {/* Mudamos para justify-center para o form ficar sempre no meio exato */}
+      {/* justify-center para o form ficar sempre no meio exato */}
       <div className="flex flex-col justify-center items-center p-8 bg-white relative w-full h-full">
         
         {/* Formulário Centralizado */}
@@ -77,7 +77,7 @@ export function Login() {
             <div className="w-full">
               <input 
                 type="text" 
-                placeholder="20221ITA01GB0006"
+                placeholder="20221ITA01GBXXXX"
                 value={credencial}
                 onChange={(e) => setCredencial(e.target.value)}
                 disabled={carregando}
