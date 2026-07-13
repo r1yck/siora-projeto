@@ -11,11 +11,14 @@ interface Turma {
   total_alunos: string;
 }
 
+// ATUALIZADO: Refletindo as colunas reais do nosso banco PostgreSQL
 interface User {
-  id: number;
+  id?: number;
+  id_usuario?: number;
   nome: string;
-  email: string;
-  perfil: string;
+  matricula_siape?: string;
+  perfil?: string;
+  tipo_usuario?: string;
 }
 
 export function DashboardProfessor() {
@@ -27,15 +30,19 @@ export function DashboardProfessor() {
   const user: User | null = userString ? JSON.parse(userString) : null;
 
   useEffect(() => {
-    // Proteção de rota: Redireciona se não for professor
-    if (!user || user.perfil !== 'PROFESSOR') {
-      window.location.href = '/login';
-      return;
+    // ATUALIZADO: Proteção de rota à prova de falhas
+    const perfilDoUsuario = (user?.perfil || user?.tipo_usuario || '').toUpperCase();
+    
+    if (!user || (!user.id && !user.id_usuario && !user.matricula_siape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) { 
+      window.location.href = '/login'; 
+      return; 
     }
 
     async function fetchTurmas() {
       try {
-        const response = await axios.get<Turma[]>(`http://localhost:3000/api/dashboard/professor/${user?.id}/turmas`);
+        // Pega o ID de onde ele estiver vindo no objeto
+        const userId = user?.id || user?.id_usuario;
+        const response = await axios.get<Turma[]>(`http://localhost:3000/api/dashboard/professor/${userId}/turmas`);
         setTurmas(response.data);
       } catch (err) {
         console.error(err);
@@ -60,16 +67,16 @@ export function DashboardProfessor() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans">
 
-      {/* CABEÇALHO (TOPBAR) - Sem a pílula de progresso do aluno */}
+      {/* CABEÇALHO (TOPBAR) */}
       <header className="flex justify-between items-center bg-white px-8 py-4 border-b border-slate-200 shadow-sm">
         <img
           src={iconSiora}
           alt="Logo SIORA"
-          onClick={() => window.location.href = '/'} // Opcional: faz a logo voltar pra home
+          onClick={() => window.location.href = '/'} 
           className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
         />
 
-        {/* Espaçador flex para empurrar o perfil para a direita já que não tem a barra de progresso */}
+        {/* Espaçador flex */}
         <div className="flex-1"></div>
 
         <div className="flex items-center gap-3">
@@ -95,11 +102,11 @@ export function DashboardProfessor() {
         {erro && <p className="text-red-500 font-medium">{erro}</p>}
 
         {/* GRID DE TURMAS */}
-        {!carregando && !erro && (
+        {!carregando && !erro && turmas.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {turmas.map((turma) => {
-              // Mock de Semestre/Carga Horária apenas para igualar ao Figma visualmente
+              // Mock de Semestre/Carga Horária
               const infoExtraMock = turma.disciplina_nome.includes('Jogos')
                 ? '8º Semestre (68 h/68 Aulas)'
                 : '6º Semestre (68 h/68 Aulas)';
@@ -144,6 +151,14 @@ export function DashboardProfessor() {
 
           </div>
         )}
+
+        {/* MENSAGEM CASO O PROFESSOR NÃO TENHA TURMAS */}
+        {!carregando && !erro && turmas.length === 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-slate-500">
+            Nenhuma turma vinculada a você neste semestre.
+          </div>
+        )}
+
       </main>
     </div>
   );

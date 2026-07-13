@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/authController.js';
+import { login } from '../controllers/authController';
 
 const router = Router();
 
-// Define o endpoint de POST para o login
-router.post('/login', AuthController.login);
+// Rota de login apontando diretamente para a função
+router.post('/login', login);
 
 export default router;

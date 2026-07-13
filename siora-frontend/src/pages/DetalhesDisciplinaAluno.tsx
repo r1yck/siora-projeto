@@ -7,10 +7,10 @@ export function DetalhesDisciplinaAluno() {
     const user = JSON.parse(localStorage.getItem('@siora:user') || '{}');
     const primeiroNome = user.nome ? user.nome.split(' ')[0] : 'Aluno';
 
-    // Proteção básica de rota
     useEffect(() => {
-        if (!user.id || user.perfil !== 'ESTUDANTE') {
+        if (!user || (!user.id && !user.id_usuario && !user.matricula_siape)) {
             window.location.href = '/login';
+            return;
         }
     }, [user]);
 
