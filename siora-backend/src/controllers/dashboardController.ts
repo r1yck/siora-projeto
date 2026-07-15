@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { getDisciplinasByAlunoId, getTurmasByProfessorId } from '../models/dashboardModel';
+import { getDisciplinasByAlunoId } from '../models/alunoModel';
+import { getTurmasByProfessorId } from '../models/dashboardModel';
 
 export const getDisciplinasAluno = async (req: Request, res: Response) => {
   try {
     const { alunoId } = req.params;
     
-    // Converte o parâmetro da URL para número e chama o banco
     const disciplinas = await getDisciplinasByAlunoId(Number(alunoId));
     
     res.status(200).json(disciplinas);

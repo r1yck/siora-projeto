@@ -3,15 +3,16 @@ import cors from 'cors';
 import pool from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes';
+import alunoRoutes from './routes/alunoRoutes';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Ativa o conjunto de rotas de autenticação sob o prefixo /api
 app.use('/api', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api', alunoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
