@@ -1,12 +1,23 @@
 import { Router } from 'express';
-import { getDisciplinasAluno, getTurmasProfessor } from '../controllers/dashboardController';
+import { getDisciplinasAluno, getTurmasProfessor, getHorariosAluno } from '../controllers/dashboardController';
+import { 
+  getCalendarioMetas, 
+  addMetaPrivada, 
+  toggleMetaPrivada, 
+  deleteMetaPrivada 
+} from '../controllers/dashboardController';
 
 const router = Router();
 
-// Rota do Aluno
 router.get('/aluno/:alunoId/disciplinas', getDisciplinasAluno);
 
-// Rota do Professor
+router.get('/aluno/:alunoId/horarios', getHorariosAluno);
+
 router.get('/professor/:professorId/turmas', getTurmasProfessor);
+
+router.get('/calendario', getCalendarioMetas);
+router.post('/tarefas', addMetaPrivada);
+router.patch('/tarefas/:id/toggle', toggleMetaPrivada);
+router.delete('/tarefas/:id', deleteMetaPrivada);
 
 export default router;

@@ -1,6 +1,6 @@
 import pool from '../config/database';
 
-export const getDisciplinasByAlunoId = async (alunoId: number) => {
+export const getDisciplinasByAlunoId = async (usuarioId: number) => {
   const query = `
     SELECT 
       d.id AS disciplina_id, 
@@ -22,13 +22,41 @@ export const getDisciplinasByAlunoId = async (alunoId: number) => {
     INNER JOIN public.disciplinas d ON m.disciplina_id = d.id
     INNER JOIN public.usuarios u_prof ON d.professor_id = u_prof.id
     INNER JOIN public.estudantes e ON m.estudante_id = e.usuario_id
-    WHERE m.estudante_id = $1
+    WHERE e.usuario_id = $1
     ORDER BY d.nome ASC;
   `;
   
-  console.log("ALERTA: O NODE LEU A QUERY NOVA DO MODEL!");
-  
-  const result = await pool.query(query, [alunoId]);
+  const result = await pool.query(query, [usuarioId]);
   return result.rows;
 };
 
+export const getHorariosByAlunoId = async (usuarioId: number) => {
+  const query = `
+    SELECT 
+      ha.id AS horario_id,
+      d.nome AS disciplina_nome,
+      ha.dia_semana,
+      TO_CHAR(ha.hora_inicio, 'HH24:MI') AS hora_inicio,
+      TO_CHAR(ha.hora_fim, 'HH24:MI') AS hora_fim,
+      ha.laboratorio
+    FROM public.horarios_aula ha
+    INNER JOIN public.disciplinas d ON ha.disciplina_id = d.id
+    INNER JOIN public.matriculas m ON m.disciplina_id = d.id
+    INNER JOIN public.estudantes e ON m.estudante_id = e.usuario_id
+    WHERE e.usuario_id = $1
+    ORDER BY 
+      CASE UPPER(ha.dia_semana)
+        WHEN 'SEGUNDA-FEIRA' THEN 1
+        WHEN 'TERÇA-FEIRA'   THEN 2
+        WHEN 'QUARTA-FEIRA'  THEN 3
+        WHEN 'QUINTA-FEIRA'  THEN 4
+        WHEN 'SEXTA-FEIRA'   THEN 5
+        WHEN 'SÁBADO'        THEN 6
+        ELSE 7
+      END,
+      ha.hora_inicio ASC;
+  `;
+  
+  const result = await pool.query(query, [usuarioId]);
+  return result.rows;
+};
