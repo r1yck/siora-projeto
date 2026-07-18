@@ -36,11 +36,6 @@ export const getTurmasByProfessorId = async (professorId: number) => {
   return result.rows;
 };
 
-// ------------------------------------------------------------------
-// ABA CALENDÁRIO / METAS
-// ------------------------------------------------------------------
-
-// Busca prazos acadêmicos (avaliacoes) das disciplinas do aluno
 export const getPrazosAcademicos = async (estudanteId: number) => {
   const query = `
     SELECT 
@@ -59,7 +54,7 @@ export const getPrazosAcademicos = async (estudanteId: number) => {
   return rows;
 };
 
-// Busca metas/tarefas privadas do aluno
+
 export const getTarefasPrivadas = async (estudanteId: number) => {
   const query = `
     SELECT id, titulo AS descricao, concluida 
@@ -71,7 +66,6 @@ export const getTarefasPrivadas = async (estudanteId: number) => {
   return rows;
 };
 
-// Cria uma nova tarefa privada
 export const createTarefaPrivada = async (estudanteId: number, titulo: string) => {
   const query = `
     INSERT INTO public.tarefas_privadas (estudante_id, titulo) 
@@ -82,7 +76,6 @@ export const createTarefaPrivada = async (estudanteId: number, titulo: string) =
   return rows[0];
 };
 
-// Marca/Desmarca tarefa como concluída
 export const toggleTarefaPrivada = async (tarefaId: number, estudanteId: number) => {
   const query = `
     UPDATE public.tarefas_privadas 
@@ -94,11 +87,55 @@ export const toggleTarefaPrivada = async (tarefaId: number, estudanteId: number)
   return rows[0];
 };
 
-// Deleta tarefa privada
 export const deleteTarefaPrivada = async (tarefaId: number, estudanteId: number) => {
   const query = `
     DELETE FROM public.tarefas_privadas 
     WHERE id = $1 AND estudante_id = $2;
   `;
   await pool.query(query, [tarefaId, estudanteId]);
+};
+
+export const getDetalhesDisciplina = async (disciplinaId: number) => {
+  const query = `
+    SELECT d.id, d.nome, d.codigo_turma, u.nome AS professor_nome
+    FROM public.disciplinas d
+    INNER JOIN public.professores p ON d.professor_id = p.usuario_id
+    INNER JOIN public.usuarios u ON p.usuario_id = u.id
+    WHERE d.id = $1;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId]);
+  return rows[0];
+};
+
+export const getMateriaisDisciplina = async (disciplinaId: number) => {
+  const query = `
+    SELECT id, nome_arquivo, tamanho, url_caminho, data_upload
+    FROM public.materiais_aula
+    WHERE disciplina_id = $1
+    ORDER BY data_upload DESC;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId]);
+  return rows;
+};
+
+export const getComunicadosDisciplina = async (disciplinaId: number) => {
+  const query = `
+    SELECT id, titulo, conteudo, data_publicacao, urgente
+    FROM public.comunicados
+    WHERE disciplina_id = $1
+    ORDER BY urgente DESC, data_publicacao DESC;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId]);
+  return rows;
+};
+
+export const getAvaliacoesDisciplina = async (disciplinaId: number) => {
+  const query = `
+    SELECT id, titulo, descricao, data_vencimento, peso
+    FROM public.avaliacoes
+    WHERE disciplina_id = $1
+    ORDER BY data_vencimento ASC;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId]);
+  return rows;
 };

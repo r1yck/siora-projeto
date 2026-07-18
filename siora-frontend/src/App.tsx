@@ -13,7 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard-aluno" element={<DashboardAluno />} />
         <Route path="/dashboard-professor" element={<DashboardProfessor />} />
-        <Route path="/detalhes-disciplina" element={<DetalhesDisciplinaAluno />} />
+        <Route path="/disciplina/:id" element={<DetalhesDisciplinaAluno />} />
         <Route path="/detalhes-disciplina-professor" element={<DetalhesDisciplinaProfessor />} />
       </Routes>
     </BrowserRouter>

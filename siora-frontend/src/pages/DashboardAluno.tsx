@@ -81,6 +81,10 @@ export function DashboardAluno() {
 
         setDisciplinas(respDisciplinas.data);
         setHorarios(respHorarios.data);
+
+        if (respDisciplinas.data.length > 0 && respDisciplinas.data[0].semestre_atual) {
+          localStorage.setItem('@siora:semestre_atual', respDisciplinas.data[0].semestre_atual.toString());
+        }
       } catch (err) {
         console.error("Erro ao buscar dados do dashboard:", err);
       } finally {
@@ -214,7 +218,6 @@ export function DashboardAluno() {
           onClick={() => window.location.href = '/'}
           className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
         />
-        {/* BARRINHA DE PROGRESSO DINÂMICA */}
         {disciplinas.length > 0 && disciplinas[0]?.semestre_atual && (
           <div className="bg-emerald-100 text-emerald-600 px-5 py-1.5 rounded-full text-xs font-bold tracking-wide">
             Progresso do Curso: {Math.round(((disciplinas[0].semestre_atual - 1) / 8) * 100)}% concluído
@@ -273,7 +276,7 @@ export function DashboardAluno() {
                 return (
                   <article
                     key={disc.disciplina_id}
-                    onClick={() => window.location.href = '/detalhes-disciplina'}
+                    onClick={() => window.location.href = `/disciplina/${disc.disciplina_id}`}
                     className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer"
                   >
                     <div className="bg-[#D1FAE5]/60 px-5 py-2.5 text-[10px] font-bold text-[#059669] uppercase tracking-wider border-b border-emerald-50">

@@ -33,7 +33,6 @@ export const getHorariosAluno = async (req: Request, res: Response) => {
   try {
     const { alunoId } = req.params;
     
-    // Chama o model para buscar os horários formatados
     const horarios = await getHorariosByAlunoId(Number(alunoId));
     
     res.status(200).json(horarios);
@@ -45,7 +44,7 @@ export const getHorariosAluno = async (req: Request, res: Response) => {
 
 export const getCalendarioMetas = async (req: Request, res: Response) => {
   try {
-    // Captura o ID vindo tanto por Query parameters (GET) quanto do corpo
+
     const estudanteId = req.query.usuario_id || (req as any).user?.id || req.body.usuario_id; 
 
     if (!estudanteId) {
@@ -72,7 +71,6 @@ export const addMetaPrivada = async (req: Request, res: Response) => {
 
     const novaTarefa = await dashboardModel.createTarefaPrivada(Number(usuario_id), descricao);
     
-    // Mapeia o retorno explicitamente para o formato que o Front-end espera
     return res.status(201).json({
       id: novaTarefa.id,
       descricao: novaTarefa.descricao, 
@@ -84,7 +82,6 @@ export const addMetaPrivada = async (req: Request, res: Response) => {
   }
 };
 
-// Alternar status (concluída/não concluída)
 export const toggleMetaPrivada = async (req: Request, res: Response) => {
   try {
     const estudanteId = (req as any).user?.id || req.body.usuario_id;
@@ -98,16 +95,48 @@ export const toggleMetaPrivada = async (req: Request, res: Response) => {
   }
 };
 
-// Excluir meta
 export const deleteMetaPrivada = async (req: Request, res: Response) => {
   try {
     const estudanteId = (req as any).user?.id || req.body.usuario_id;
     const { id } = req.params;
 
     await dashboardModel.deleteTarefaPrivada(Number(id), estudanteId);
-    return res.status(204).send(); // 204 = No Content (sucesso, sem corpo de resposta)
+    return res.status(204).send();
   } catch (error) {
     console.error('Erro ao deletar meta:', error);
     return res.status(500).json({ error: 'Erro interno ao deletar meta.' });
+  }
+};
+
+export const getDetalhesCompletosDisciplina = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
+    }
+
+    const disciplinaId = Number(id);
+    
+    const [info, materiais, comunicados, avaliacoes] = await Promise.all([
+      dashboardModel.getDetalhesDisciplina(disciplinaId),
+      dashboardModel.getMateriaisDisciplina(disciplinaId),
+      dashboardModel.getComunicadosDisciplina(disciplinaId),
+      dashboardModel.getAvaliacoesDisciplina(disciplinaId)
+    ]);
+
+    if (!info) {
+      return res.status(404).json({ error: 'Disciplina não encontrada.' });
+    }
+
+    return res.status(200).json({
+      info,
+      materiais,
+      comunicados,
+      avaliacoes
+    });
+  } catch (error) {
+    console.error('Erro ao buscar detalhes da disciplina:', error);
+    return res.status(500).json({ error: 'Erro interno ao carregar detalhes da disciplina.' });
   }
 };
