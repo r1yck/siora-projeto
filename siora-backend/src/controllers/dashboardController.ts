@@ -117,7 +117,7 @@ export const getDetalhesCompletosDisciplina = async (req: Request, res: Response
     }
 
     const disciplinaId = Number(id);
-    
+
     const [info, materiais, comunicados, avaliacoes] = await Promise.all([
       dashboardModel.getDetalhesDisciplina(disciplinaId),
       dashboardModel.getMateriaisDisciplina(disciplinaId),
@@ -138,5 +138,76 @@ export const getDetalhesCompletosDisciplina = async (req: Request, res: Response
   } catch (error) {
     console.error('Erro ao buscar detalhes da disciplina:', error);
     return res.status(500).json({ error: 'Erro interno ao carregar detalhes da disciplina.' });
+  }
+};
+
+// Controller para criar comunicados (Mural e Alteração de Sala)
+export const postComunicadoDocente = async (req: Request, res: Response) => {
+  try {
+    const { disciplina_id, titulo, conteudo, urgente } = req.body;
+
+    if (!disciplina_id || !titulo || !conteudo) {
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+    }
+
+    const novoComunicado = await dashboardModel.createComunicado(
+      Number(disciplina_id),
+      titulo,
+      conteudo,
+      Boolean(urgente)
+    );
+
+    return res.status(201).json(novoComunicado);
+  } catch (error) {
+    console.error('Erro ao postar comunicado:', error);
+    return res.status(500).json({ error: 'Erro interno ao salvar comunicado.' });
+  }
+};
+
+// Controller para agendar novas avaliações
+export const postAvaliacaoDocente = async (req: Request, res: Response) => {
+  try {
+    const { disciplina_id, titulo, descricao, data_vencimento, peso } = req.body;
+
+    if (!disciplina_id || !titulo || !data_vencimento || peso === undefined) {
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+    }
+
+    const novaAvaliacao = await dashboardModel.createAvaliacao(
+      Number(disciplina_id),
+      titulo,
+      descricao || 'Submissão via portal.',
+      data_vencimento,
+      Number(peso)
+    );
+
+    return res.status(201).json(novaAvaliacao);
+  } catch (error) {
+    console.error('Erro ao agendar avaliação:', error);
+    return res.status(500).json({ error: 'Erro interno ao salvar avaliação.' });
+  }
+};
+
+export const removeComunicadoDocente = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletado = await dashboardModel.deleteComunicado(Number(id));
+    if (!deletado) return res.status(404).json({ error: 'Aviso não encontrado.' });
+    return res.status(200).json({ message: 'Aviso removido com sucesso.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno ao deletar comunicado.' });
+  }
+};
+
+export const removeAvaliacaoDocente = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletado = await dashboardModel.deleteAvaliacao(Number(id));
+    if (!deletado) return res.status(404).json({ error: 'Avaliação não encontrada.' });
+    return res.status(200).json({ message: 'Avaliação removida com sucesso.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno ao deletar avaliação.' });
   }
 };

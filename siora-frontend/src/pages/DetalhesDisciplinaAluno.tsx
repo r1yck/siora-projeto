@@ -188,7 +188,7 @@ export function DetalhesDisciplinaAluno() {
                     {/* COLUNA ESQUERDA (Avisos e Materiais) */}
                     <div className="lg:col-span-2 flex flex-col gap-6">
 
-                        {/* Mural de Avisos */}
+                        {/* Mural de Avisos - Atualizado e Limpo */}
                         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
                             <h2 className="text-lg font-bold text-slate-800 mb-4">Mural de Avisos</h2>
 
@@ -199,9 +199,9 @@ export function DetalhesDisciplinaAluno() {
                                     {comunicadosFiltados.map((aviso) => (
                                         <div key={aviso.id} className="text-sm text-slate-600 leading-relaxed border-b border-slate-50 pb-3 last:border-none last:pb-0">
                                             <span className="text-slate-400 font-medium">
-                                                Postado em {new Date(aviso.data_publicacao).toLocaleDateString('pt-BR')}
+                                                Postado em {new Date(aviso.data_publicacao).toLocaleDateString('pt-BR')}:{" "}
                                             </span>
-                                            <strong className="text-slate-700"> {aviso.titulo}:</strong> {aviso.conteudo}
+                                            <span className="text-slate-700">{aviso.conteudo}</span>
                                         </div>
                                     ))}
                                 </div>

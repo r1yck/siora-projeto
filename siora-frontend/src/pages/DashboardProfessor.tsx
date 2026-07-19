@@ -11,7 +11,6 @@ interface Turma {
   total_alunos: string;
 }
 
-// ATUALIZADO: Refletindo as colunas reais do nosso banco PostgreSQL
 interface User {
   id?: number;
   id_usuario?: number;
@@ -29,21 +28,23 @@ export function DashboardProfessor() {
   const userString = localStorage.getItem('@siora:user');
   const user: User | null = userString ? JSON.parse(userString) : null;
 
+  // Extrai chaves primitivas para evitar loops infinitos no useEffect
+  const userId = user?.id || user?.id_usuario;
+  const perfilDoUsuario = (user?.perfil || user?.tipo_usuario || '').toUpperCase();
+  const matriculaSiape = user?.matricula_siape;
+
   useEffect(() => {
-    // ATUALIZADO: Proteção de rota à prova de falhas
-    const perfilDoUsuario = (user?.perfil || user?.tipo_usuario || '').toUpperCase();
-    
-    if (!user || (!user.id && !user.id_usuario && !user.matricula_siape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) { 
+    // Proteção de rota à prova de falhas com tipos primitivos
+    if (!userString || (!userId && !matriculaSiape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) { 
       window.location.href = '/login'; 
       return; 
     }
 
     async function fetchTurmas() {
       try {
-        // Pega o ID de onde ele estiver vindo no objeto
-        const userId = user?.id || user?.id_usuario;
+        setCarregando(true);
         const response = await axios.get<Turma[]>(`http://localhost:3000/api/dashboard/professor/${userId}/turmas`);
-        setTurmas(response.data);
+        setTurmas(response.data || []);
       } catch (err) {
         console.error(err);
         setErro('Não foi possível carregar as turmas.');
@@ -52,8 +53,11 @@ export function DashboardProfessor() {
       }
     }
 
-    fetchTurmas();
-  }, [user]);
+    if (userId) {
+      fetchTurmas();
+    }
+  // Mudamos a dependência para monitorar apenas variáveis de texto/número estáveis
+  }, [userId, perfilDoUsuario, matriculaSiape, userString]);
 
   function handleLogout(e: React.MouseEvent) {
     e.preventDefault();
@@ -61,7 +65,6 @@ export function DashboardProfessor() {
     window.location.href = '/login';
   }
 
-  // Pega o nome abreviado (Ex: "Prof. Heverton")
   const nomeProfessor = user?.nome ? `Prof. ${user.nome.split(' ')[0]}` : 'Professor';
 
   return (
@@ -72,11 +75,10 @@ export function DashboardProfessor() {
         <img
           src={iconSiora}
           alt="Logo SIORA"
-          onClick={() => window.location.href = '/'} 
+          onClick={() => window.location.href = '/dashboard-professor'} 
           className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
         />
 
-        {/* Espaçador flex */}
         <div className="flex-1"></div>
 
         <div className="flex items-center gap-3">
@@ -97,16 +99,13 @@ export function DashboardProfessor() {
           <p className="text-slate-500 text-sm font-medium">Painel do Docente • Semestre 2026.1</p>
         </section>
 
-        {/* FEEDBACK DE CARREGAMENTO / ERRO */}
         {carregando && <p className="text-slate-500 animate-pulse font-medium">Carregando turmas...</p>}
         {erro && <p className="text-red-500 font-medium">{erro}</p>}
 
-        {/* GRID DE TURMAS */}
         {!carregando && !erro && turmas.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {turmas.map((turma) => {
-              // Mock de Semestre/Carga Horária
               const infoExtraMock = turma.disciplina_nome.includes('Jogos')
                 ? '8º Semestre (68 h/68 Aulas)'
                 : '6º Semestre (68 h/68 Aulas)';
@@ -116,12 +115,10 @@ export function DashboardProfessor() {
                   key={turma.disciplina_id}
                   className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  {/* Tag Superior */}
                   <div className="bg-[#D1FAE5]/60 px-5 py-2.5 text-[10px] font-bold text-[#059669] uppercase tracking-wider border-b border-emerald-50">
                     Bacharelado em Sistemas de Informação
                   </div>
 
-                  {/* Corpo do Card */}
                   <div className="p-6 flex-grow border-b border-slate-100">
                     <h2 className="text-[1.15rem] font-bold text-slate-800 mb-2 leading-snug">
                       {turma.disciplina_nome}
@@ -131,15 +128,15 @@ export function DashboardProfessor() {
                     </p>
                   </div>
 
-                  {/* Rodapé (Alunos e Ação) */}
                   <div className="px-6 py-4 flex items-center justify-between">
                     <span className="flex items-center gap-2 text-[#059669] text-xs font-bold">
                       <Users size={18} weight="fill" />
                       {turma.total_alunos} Alunos Matriculados
                     </span>
 
+                    {/* ATUALIZADO: Enviando o ID dinâmico da disciplina pela URL para o painel do professor */}
                     <button
-                      onClick={() => window.location.href = '/detalhes-disciplina-professor'}
+                      onClick={() => window.location.href = `/detalhes-disciplina-professor/${turma.disciplina_id}`}
                       className="flex items-center gap-1 text-[#3B82F6] text-xs font-bold hover:text-blue-700 transition-colors"
                     >
                       Gerenciar Turma <ArrowRight size={14} weight="bold" />
@@ -152,7 +149,6 @@ export function DashboardProfessor() {
           </div>
         )}
 
-        {/* MENSAGEM CASO O PROFESSOR NÃO TENHA TURMAS */}
         {!carregando && !erro && turmas.length === 0 && (
           <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-slate-500">
             Nenhuma turma vinculada a você neste semestre.

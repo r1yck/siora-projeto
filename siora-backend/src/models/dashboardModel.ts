@@ -139,3 +139,37 @@ export const getAvaliacoesDisciplina = async (disciplinaId: number) => {
   const { rows } = await pool.query(query, [disciplinaId]);
   return rows;
 };
+
+// Cria um novo comunicado ou alerta de mudança de sala
+export const createComunicado = async (disciplinaId: number, titulo: string, conteudo: string, urgente: boolean) => {
+  const query = `
+    INSERT INTO public.comunicados (disciplina_id, titulo, conteudo, data_publicacao, urgente)
+    VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4)
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId, titulo, conteudo, urgente]);
+  return rows[0];
+};
+
+// Agenda uma nova avaliação/entrega na timeline
+export const createAvaliacao = async (disciplinaId: number, titulo: string, descricao: string, dataVencimento: string, peso: number) => {
+  const query = `
+    INSERT INTO public.avaliacoes (disciplina_id, titulo, descricao, data_vencimento, peso)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId, titulo, descricao, dataVencimento, peso]);
+  return rows[0];
+};
+
+export const deleteComunicado = async (id: number) => {
+  const query = `DELETE FROM public.comunicados WHERE id = $1 RETURNING *;`;
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
+};
+
+export const deleteAvaliacao = async (id: number) => {
+  const query = `DELETE FROM public.avaliacoes WHERE id = $1 RETURNING *;`;
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
+};
