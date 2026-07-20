@@ -4,6 +4,7 @@ import pool from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes';
 import alunoRoutes from './routes/alunoRoutes';
+import path from 'path';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api', alunoRoutes);
+app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')));
 
 const PORT = process.env.PORT || 3000;
 

@@ -26,6 +26,14 @@ interface Avaliacao {
   peso: string | number;
 }
 
+interface MaterialAula {
+  id: number;
+  nome_arquivo: string;
+  tamanho: string;
+  url_caminho: string;
+  data_upload: string;
+}
+
 export function DetalhesDisciplinaProfessor() {
   const { id } = useParams<{ id: string }>();
 
@@ -49,21 +57,7 @@ export function DetalhesDisciplinaProfessor() {
   const perfilDoUsuario = (user?.perfil || user?.tipo_usuario || '').toUpperCase();
   const matriculaSiape = user?.matricula_siape;
 
-  // Função para carregar os dados atualizados do banco
-  async function carregarDadosCompletos() {
-    try {
-      const response = await axios.get(`http://localhost:3000/api/dashboard/disciplina/${id}`);
-      if (response.data) {
-        setInfo(response.data.info || null);
-        setComunicados(response.data.comunicados || []);
-        setAvaliacoes(response.data.avaliacoes || []);
-      }
-    } catch (err) {
-      console.error("Erro ao buscar dados da disciplina:", err);
-    } finally {
-      setCarregando(false);
-    }
-  }
+  const [materiais, setMateriais] = useState<MaterialAula[]>([]);
 
   useEffect(() => {
     if (!userString || (!userId && !matriculaSiape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) {
@@ -71,7 +65,6 @@ export function DetalhesDisciplinaProfessor() {
       return;
     }
 
-    // Movemos a função para cá para isolar o escopo do Effect
     async function carregarDadosCompletos() {
       try {
         setCarregando(true);
@@ -80,6 +73,7 @@ export function DetalhesDisciplinaProfessor() {
           setInfo(response.data.info || null);
           setComunicados(response.data.comunicados || []);
           setAvaliacoes(response.data.avaliacoes || []);
+          setMateriais(response.data.materiais || []);
         }
       } catch (err) {
         console.error("Erro ao buscar dados da disciplina:", err);
@@ -92,6 +86,25 @@ export function DetalhesDisciplinaProfessor() {
       carregarDadosCompletos();
     }
   }, [id, userId, perfilDoUsuario, matriculaSiape, userString]);
+
+  async function atualizarDadosLocais() {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/dashboard/disciplina/${id}`);
+      if (response.data) {
+        setComunicados(response.data.comunicados || []);
+        setAvaliacoes(response.data.avaliacoes || []);
+        setMateriais(response.data.materiais || []);
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar dados:", err);
+    }
+  }
+
+  function handleLogout(e: React.MouseEvent) {
+    e.preventDefault();
+    localStorage.removeItem('@siora:user');
+    window.location.href = '/login';
+  }
 
   // DELETAR COMUNICADO/ALERTA
   async function handleDeletarComunicado(comunicadoId: number) {
@@ -117,6 +130,18 @@ export function DetalhesDisciplinaProfessor() {
     }
   }
 
+  // DELETAR MATERIAL
+  async function handleDeletarMaterial(materialId: number) {
+    if (!confirm('Deseja realmente remover este material de aula?')) return;
+    try {
+      await axios.delete(`http://localhost:3000/api/dashboard/professor/material/${materialId}`);
+      setMateriais(prev => prev.filter(m => m.id !== materialId));
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao deletar material de aula.');
+    }
+  }
+
   // ENVIAR LOCALIZAÇÃO (ALERTA URGENTE)
   async function handleAtualizarLocalizacao() {
     if (!novaSala.trim()) return alert('Digite o local ou laboratório!');
@@ -128,7 +153,7 @@ export function DetalhesDisciplinaProfessor() {
         urgente: true
       });
       setNovaSala('');
-      carregarDadosCompletos();
+      atualizarDadosLocais();
     } catch (err) {
       console.error(err);
     }
@@ -145,7 +170,7 @@ export function DetalhesDisciplinaProfessor() {
         urgente: false
       });
       setConteudoMural('');
-      carregarDadosCompletos();
+      atualizarDadosLocais();
     } catch (err) {
       console.error(err);
     }
@@ -165,9 +190,33 @@ export function DetalhesDisciplinaProfessor() {
       setNomeAtividade('');
       setDataVencimento('');
       setPesoValor('');
-      carregarDadosCompletos();
+      atualizarDadosLocais();
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  // UPLOAD DE ARQUIVO
+  async function handleUploadArquivo(e: React.ChangeEvent<HTMLInputElement>) {
+    const arquivosSelecionados = e.target.files;
+    if (!arquivosSelecionados || arquivosSelecionados.length === 0) return;
+
+    const arquivo = arquivosSelecionados[0];
+    const formData = new FormData();
+    formData.append('disciplina_id', String(id));
+    formData.append('file', arquivo);
+
+    try {
+      await axios.post('http://localhost:3000/api/dashboard/professor/material', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert(`Upload de "${arquivo.name}" concluído com sucesso!`);
+      atualizarDadosLocais();
+    } catch (err) {
+      console.error('Erro no upload do arquivo:', err);
+      alert('Falha ao enviar arquivo para o servidor.');
     }
   }
 
@@ -186,21 +235,37 @@ export function DetalhesDisciplinaProfessor() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans">
+      
+      {/* HEADER ORIGINAL COMPLETO */}
       <header className="flex justify-between items-center bg-white px-8 py-4 border-b border-slate-200 shadow-sm">
-        <img src={iconSiora} alt="Logo" onClick={() => window.location.href = '/dashboard-professor'} className="w-10 h-10 cursor-pointer" />
+        <img 
+          src={iconSiora} 
+          alt="Logo SIORA" 
+          onClick={() => window.location.href = '/dashboard-professor'} 
+          className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity" 
+        />
+        <div className="flex-1"></div>
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-sm text-slate-700">Olá, {nomeProfessor}</span>
+          <div className="flex flex-col items-end leading-tight">
+            <span className="font-semibold text-sm text-slate-700">Olá, {nomeProfessor}</span>
+            <button onClick={handleLogout} className="text-slate-400 text-xs hover:text-slate-600 transition-colors">
+              Sair
+            </button>
+          </div>
+          <div className="w-9 h-9 bg-slate-200 rounded-full flex-shrink-0"></div>
         </div>
       </header>
 
       <main className="max-w-[1200px] mx-auto px-6 py-10">
+        
+        {/* BREADCRUMB ORIGINAL */}
         <nav className="text-sm font-medium mb-6 flex items-center gap-2">
-          <a href="/dashboard-professor" className="text-slate-400">Suas Turmas</a>
+          <a href="/dashboard-professor" className="text-slate-400 hover:text-slate-600 transition-colors">Suas Turmas</a>
           <CaretRight size={14} className="text-slate-400" />
           <span className="text-blue-500 font-semibold">{info.nome}</span>
         </nav>
 
-        {/* CONTROLE DE LOCALIZAÇÃO / EXIBE E LIMPA O ALERTA ATUAL */}
+        {/* CONTROLE DE LOCALIZAÇÃO ORIGINAL CORRIGIDO */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-8 shadow-sm">
           <h2 className="text-sm font-bold text-slate-700 mb-3">Definir Localização da Aula de Hoje</h2>
           <div className="flex flex-wrap items-center gap-4">
@@ -209,9 +274,9 @@ export function DetalhesDisciplinaProfessor() {
               value={novaSala}
               onChange={(e) => setNovaSala(e.target.value)}
               placeholder="Ex: Laboratório 124"
-              className="flex-1 max-w-sm bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm focus:outline-none"
+              className="flex-1 max-w-sm bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
             />
-            <button onClick={handleAtualizarLocalizacao} className="bg-blue-500 text-white font-semibold py-2.5 px-6 rounded-lg text-sm">
+            <button onClick={handleAtualizarLocalizacao} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg text-sm transition-colors shadow-sm">
               Atualizar Localização
             </button>
             {alertaDeSalaAtual && (
@@ -225,15 +290,19 @@ export function DetalhesDisciplinaProfessor() {
           </div>
         </div>
 
+        {/* CABEÇALHO DA DISCIPLINA */}
         <section className="mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-1">{info.nome}</h1>
-          <p className="text-slate-400 text-sm font-medium">Código: {info.codigo_turma} • Gerenciamento Docente</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 mb-1 tracking-tight">{info.nome}</h1>
+          <p className="text-slate-400 text-sm font-medium">Turma: {info.codigo_turma} • {user?.nome}</p>
         </section>
 
+        {/* GRID PRINCIPAL */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          
+          {/* COLUNA ESQUERDA (Mural e Materiais) */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            
-            {/* MURAL DE AVISOS COM LISTA DE GERENCIAMENTO */}
+
+            {/* MURAL DE AVISOS */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4">Mural de Avisos</h2>
               <textarea
@@ -241,10 +310,10 @@ export function DetalhesDisciplinaProfessor() {
                 onChange={(e) => setConteudoMural(e.target.value)}
                 placeholder="Escreva um novo comunicado para a turma..."
                 rows={3}
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm mb-3 resize-none focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-700"
               ></textarea>
               <div className="flex justify-end mb-6">
-                <button onClick={handlePublicarMural} className="bg-blue-500 text-white font-semibold py-2 px-5 rounded-lg text-sm">
+                <button onClick={handlePublicarMural} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg text-sm transition-colors shadow-sm">
                   Publicar no Mural
                 </button>
               </div>
@@ -273,21 +342,54 @@ export function DetalhesDisciplinaProfessor() {
             {/* UPLOAD DE MATERIAL */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4">Material de Aula / Downloads</h2>
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50">
-                <p className="text-slate-400 text-sm font-medium mb-2">Fazer upload de arquivos de aula (PDF, Slides)</p>
-                <UploadSimple size={36} className="text-slate-300" weight="bold" />
+
+              <label className="border-2 border-dashed border-slate-300 rounded-lg p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition-all">
+                <input
+                  type="file"
+                  onChange={handleUploadArquivo}
+                  className="hidden"
+                />
+                <p className="text-slate-500 text-sm font-semibold mb-2">Clique aqui para enviar arquivos de aula</p>
+                <p className="text-slate-400 text-xs mb-3">Aceita qualquer formato (PDF, Slides, ZIP, Imagens) até 20MB</p>
+                <UploadSimple size={36} className="text-blue-500" weight="bold" />
+              </label>
+
+              {/* Lista dos arquivos que o professor já subiu */}
+              <div className="border-t border-slate-100 pt-4 mt-6 flex flex-col gap-3">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Arquivos Disponíveis para a Turma</h3>
+                {materiais.length === 0 ? (
+                  <p className="text-sm text-slate-400 italic">Nenhum arquivo anexado a esta disciplina.</p>
+                ) : (
+                  materiais.map(arquivo => (
+                    <div key={arquivo.id} className="flex justify-between items-center bg-slate-50 border border-slate-100 p-3 rounded-lg text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-700 font-medium truncate max-w-[280px] md:max-w-[400px]">
+                          {arquivo.nome_arquivo}
+                        </span>
+                        <span className="text-xs text-slate-400">({arquivo.tamanho})</span>
+                      </div>
+                      <button
+                        onClick={() => handleDeletarMaterial(arquivo.id)}
+                        className="text-slate-400 hover:text-red-500 p-1 transition-colors"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
+
           </div>
 
-          {/* COLUNA DIREITA (AGENDAR E GERENCIAR AVALIAÇÕES) */}
+          {/* COLUNA DIREITA (Agendar Avaliação) */}
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col">
             <h2 className="text-lg font-bold text-slate-900 mb-6">Agendar Nova Avaliação</h2>
             <div className="flex flex-col gap-4 mb-6">
-              <input type="text" value={nomeAtividade} onChange={(e) => setNomeAtividade(e.target.value)} placeholder="Nome da Atividade" className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm" />
-              <input type="datetime-local" value={dataVencimento} onChange={(e) => setDataVencimento(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm text-slate-500" />
-              <input type="text" value={pesoValor} onChange={(e) => setPesoValor(e.target.value)} placeholder="Peso/Valor (Ex: 4.0)" className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm" />
-              <button onClick={handleAgendarAvaliacao} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 shadow-sm">
+              <input type="text" value={nomeAtividade} onChange={(e) => setNomeAtividade(e.target.value)} placeholder="Nome da Atividade" className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
+              <input type="datetime-local" value={dataVencimento} onChange={(e) => setDataVencimento(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
+              <input type="text" value={pesoValor} onChange={(e) => setPesoValor(e.target.value)} placeholder="Peso/Valor (Ex: 4.0)" className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
+              <button onClick={handleAgendarAvaliacao} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-lg text-sm flex items-center justify-center gap-2 shadow-sm transition-colors">
                 Salvar e Disparar Alerta <Warning size={16} weight="bold" />
               </button>
             </div>
@@ -312,6 +414,7 @@ export function DetalhesDisciplinaProfessor() {
               )}
             </div>
           </div>
+
         </div>
       </main>
     </div>

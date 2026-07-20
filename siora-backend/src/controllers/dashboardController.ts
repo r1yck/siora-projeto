@@ -211,3 +211,50 @@ export const removeAvaliacaoDocente = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Erro interno ao deletar avaliação.' });
   }
 };
+
+// Adicione no final do seu dashboardController.ts
+
+export const postMaterialDocente = async (req: Request, res: Response) => {
+  try {
+    const { disciplina_id } = req.body;
+    const file = req.file;
+
+    if (!disciplina_id || !file) {
+      return res.status(400).json({ error: 'Disciplina ou arquivo não fornecidos.' });
+    }
+
+    // Calcula o tamanho em formato legível (Ex: 4.2 MB)
+    const tamanhoEmBytes = file.size;
+    let tamanhoFormatado = `${(tamanhoEmBytes / 1024).toFixed(1)} KB`;
+    if (tamanhoEmBytes > 1024 * 1024) {
+      tamanhoFormatado = `${(tamanhoEmBytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    // A URL que o frontend vai usar para baixar o arquivo
+    const urlCaminho = `http://localhost:3000/files/${file.filename}`;
+
+    const novoMaterial = await dashboardModel.createMaterialAula(
+      Number(disciplina_id),
+      file.originalname, // Nome original do arquivo (Ex: Aula 04 - Slides.pdf)
+      tamanhoFormatado,
+      urlCaminho
+    );
+
+    return res.status(201).json(novoMaterial);
+  } catch (error) {
+    console.error('Erro ao fazer upload de material:', error);
+    return res.status(500).json({ error: 'Erro interno ao salvar arquivo.' });
+  }
+};
+
+export const removeMaterialDocente = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletado = await dashboardModel.deleteMaterialAula(Number(id));
+    if (!deletado) return res.status(404).json({ error: 'Arquivo não encontrado.' });
+    return res.status(200).json({ message: 'Arquivo removido do portal com sucesso.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno ao deletar arquivo.' });
+  }
+};

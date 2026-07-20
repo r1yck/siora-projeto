@@ -173,3 +173,20 @@ export const deleteAvaliacao = async (id: number) => {
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 };
+
+// Adicione no final do arquivo public.materiais_aula
+export const createMaterialAula = async (disciplinaId: number, nomeArquivo: string, tamanho: string, urlCaminho: string) => {
+  const query = `
+    INSERT INTO public.materiais_aula (disciplina_id, nome_arquivo, tamanho, url_caminho, data_upload)
+    VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId, nomeArquivo, tamanho, urlCaminho]);
+  return rows[0];
+};
+
+export const deleteMaterialAula = async (id: number) => {
+  const query = `DELETE FROM public.materiais_aula WHERE id = $1 RETURNING *;`;
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
+};

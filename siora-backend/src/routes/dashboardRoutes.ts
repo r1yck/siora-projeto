@@ -11,8 +11,11 @@ import {
   postComunicadoDocente,
   postAvaliacaoDocente,
   removeComunicadoDocente,
-  removeAvaliacaoDocente
+  removeAvaliacaoDocente,
+  removeMaterialDocente
 } from '../controllers/dashboardController';
+import { upload } from '../config/multer';
+import { postMaterialDocente } from '../controllers/dashboardController';
 
 const router = Router();
 
@@ -33,5 +36,7 @@ router.post('/professor/comunicado', postComunicadoDocente);
 router.post('/professor/avaliacao', postAvaliacaoDocente);
 router.delete('/professor/comunicado/:id', removeComunicadoDocente);
 router.delete('/professor/avaliacao/:id', removeAvaliacaoDocente);
+router.post('/professor/material', upload.single('file'), postMaterialDocente);
+router.delete('/professor/material/:id', removeMaterialDocente);
 
 export default router;
