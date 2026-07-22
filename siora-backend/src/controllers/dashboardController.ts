@@ -44,7 +44,6 @@ export const getHorariosAluno = async (req: Request, res: Response) => {
 
 export const getCalendarioMetas = async (req: Request, res: Response) => {
   try {
-
     const estudanteId = req.query.usuario_id || (req as any).user?.id || req.body.usuario_id; 
 
     if (!estudanteId) {
@@ -74,6 +73,7 @@ export const addMetaPrivada = async (req: Request, res: Response) => {
     return res.status(201).json({
       id: novaTarefa.id,
       descricao: novaTarefa.descricao, 
+      concluidas: novaTarefa.concluidas,
       concluida: novaTarefa.concluida
     });
   } catch (error) {
@@ -141,7 +141,6 @@ export const getDetalhesCompletosDisciplina = async (req: Request, res: Response
   }
 };
 
-// Controller para criar comunicados (Mural e Alteração de Sala)
 export const postComunicadoDocente = async (req: Request, res: Response) => {
   try {
     const { disciplina_id, titulo, conteudo, urgente } = req.body;
@@ -164,7 +163,6 @@ export const postComunicadoDocente = async (req: Request, res: Response) => {
   }
 };
 
-// Controller para agendar novas avaliações
 export const postAvaliacaoDocente = async (req: Request, res: Response) => {
   try {
     const { disciplina_id, titulo, descricao, data_vencimento, peso } = req.body;
@@ -212,8 +210,6 @@ export const removeAvaliacaoDocente = async (req: Request, res: Response) => {
   }
 };
 
-// Adicione no final do seu dashboardController.ts
-
 export const postMaterialDocente = async (req: Request, res: Response) => {
   try {
     const { disciplina_id } = req.body;
@@ -223,19 +219,17 @@ export const postMaterialDocente = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Disciplina ou arquivo não fornecidos.' });
     }
 
-    // Calcula o tamanho em formato legível (Ex: 4.2 MB)
     const tamanhoEmBytes = file.size;
     let tamanhoFormatado = `${(tamanhoEmBytes / 1024).toFixed(1)} KB`;
     if (tamanhoEmBytes > 1024 * 1024) {
       tamanhoFormatado = `${(tamanhoEmBytes / (1024 * 1024)).toFixed(1)} MB`;
     }
 
-    // A URL que o frontend vai usar para baixar o arquivo
     const urlCaminho = `http://localhost:3000/files/${file.filename}`;
 
     const novoMaterial = await dashboardModel.createMaterialAula(
       Number(disciplina_id),
-      file.originalname, // Nome original do arquivo (Ex: Aula 04 - Slides.pdf)
+      file.originalname,
       tamanhoFormatado,
       urlCaminho
     );
@@ -259,7 +253,6 @@ export const removeMaterialDocente = async (req: Request, res: Response) => {
   }
 };
 
-// Controller para atualizar localização/laboratório em tempo real (RF04)
 export const updateLocalizacaoDocente = async (req: Request, res: Response) => {
   try {
     const { disciplina_id, laboratorio } = req.body;
@@ -273,7 +266,6 @@ export const updateLocalizacaoDocente = async (req: Request, res: Response) => {
       laboratorio
     );
 
-    // Cria automaticamente o aviso de mudança de sala no mural com flag urgente (RF04)
     await dashboardModel.createComunicado(
       Number(disciplina_id),
       'Atenção: Mudança de Sala/Laboratório',

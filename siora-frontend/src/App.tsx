@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './pages/Login.js';
-import { DashboardAluno } from './pages/DashboardAluno.js';
-import { DashboardProfessor } from './pages/DashboardProfessor.js';
+import { Login } from './pages/Login';
+import { DashboardAluno } from './pages/DashboardAluno';
+import { DashboardProfessor } from './pages/DashboardProfessor';
 import { DetalhesDisciplinaAluno } from './pages/DetalhesDisciplinaAluno';
 import { DetalhesDisciplinaProfessor } from './pages/DetalhesDisciplinaProfessor';
 

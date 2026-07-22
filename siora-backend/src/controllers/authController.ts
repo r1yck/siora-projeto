@@ -30,7 +30,6 @@ export const login = async (req: Request, res: Response) => {
 
     const { senha_hash, ...userWithoutPassword } = user;
 
-    // Retorna os dados do usuário, incluindo o campo 'primeiro_acesso'
     res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error("Erro no login:", error);
@@ -52,11 +51,9 @@ export const redefinirSenha = async (req: Request, res: Response) => {
 
     console.log(`Redefinindo senha para o usuário ID: ${userId}`);
 
-    // Gerar hash da nova senha
     const saltRounds = 10;
     const newPasswordHash = await bcrypt.hash(novaSenha, saltRounds);
 
-    // Atualizar no banco e setar primeiro_acesso = false
     const updatedUser = await updatePassword(userId, newPasswordHash);
 
     if (!updatedUser) {

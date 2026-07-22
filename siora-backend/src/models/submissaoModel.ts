@@ -10,7 +10,6 @@ export interface Submissao {
   nota?: number | null;
 }
 
-// Salva ou sobrescreve uma submissão de aluno (RN07)
 export const salvarOuAtualizarSubmissao = async (
   avaliacaoId: number,
   estudanteId: number,
@@ -32,7 +31,6 @@ export const salvarOuAtualizarSubmissao = async (
   return result.rows[0];
 };
 
-// Busca a submissão de um aluno específico para uma avaliação
 export const getSubmissaoPorEstudante = async (avaliacaoId: number, estudanteId: number) => {
   const query = `
     SELECT * FROM submissoes_avaliacoes 
@@ -42,7 +40,6 @@ export const getSubmissaoPorEstudante = async (avaliacaoId: number, estudanteId:
   return result.rows[0];
 };
 
-// Listar todas as submissões de uma avaliação (Visão do Professor - Modal no Figma)
 export const getSubmissoesPorAvaliacao = async (avaliacaoId: number) => {
   const query = `
     SELECT 
@@ -63,7 +60,6 @@ export const getSubmissoesPorAvaliacao = async (avaliacaoId: number) => {
   return result.rows;
 };
 
-// Lançar ou atualizar nota do aluno (RF11)
 export const atualizarNotaSubmissao = async (submissaoId: number, nota: number) => {
   const query = `
     UPDATE submissoes_avaliacoes

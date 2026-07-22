@@ -54,7 +54,6 @@ export const getPrazosAcademicos = async (estudanteId: number) => {
   return rows;
 };
 
-
 export const getTarefasPrivadas = async (estudanteId: number) => {
   const query = `
     SELECT id, titulo AS descricao, concluida 
@@ -139,7 +138,6 @@ export const getAvaliacoesDisciplina = async (disciplinaId: number) => {
   return rows;
 };
 
-// Cria um novo comunicado ou alerta de mudança de sala
 export const createComunicado = async (disciplinaId: number, titulo: string, conteudo: string, urgente: boolean) => {
   const query = `
     INSERT INTO public.comunicados (disciplina_id, titulo, conteudo, data_publicacao, urgente)
@@ -150,7 +148,6 @@ export const createComunicado = async (disciplinaId: number, titulo: string, con
   return rows[0];
 };
 
-// Agenda uma nova avaliação/entrega na timeline
 export const createAvaliacao = async (disciplinaId: number, titulo: string, descricao: string, dataVencimento: string, peso: number) => {
   const query = `
     INSERT INTO public.avaliacoes (disciplina_id, titulo, descricao, data_vencimento, peso)
@@ -173,7 +170,6 @@ export const deleteAvaliacao = async (id: number) => {
   return rows[0];
 };
 
-// Adicione no final do arquivo public.materiais_aula
 export const createMaterialAula = async (disciplinaId: number, nomeArquivo: string, tamanho: string, urlCaminho: string) => {
   const query = `
     INSERT INTO public.materiais_aula (disciplina_id, nome_arquivo, tamanho, url_caminho, data_upload)
@@ -190,7 +186,6 @@ export const deleteMaterialAula = async (id: number) => {
   return rows[0];
 };
 
-// Atualizar o laboratório/sala de uma aula da disciplina (RF04 - Professor)
 export const updateLaboratorioDisciplina = async (disciplinaId: number, novoLaboratorio: string) => {
   const query = `
     UPDATE public.horarios_aula
@@ -202,7 +197,6 @@ export const updateLaboratorioDisciplina = async (disciplinaId: number, novoLabo
   return rows;
 };
 
-// Buscar aviso urgente de troca de sala ou comunicado topo do aluno (RF04)
 export const getAvisoUrgenteDisciplina = async (disciplinaId: number) => {
   const query = `
     SELECT id, titulo, conteudo, data_publicacao
