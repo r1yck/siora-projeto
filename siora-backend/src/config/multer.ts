@@ -5,11 +5,11 @@ import crypto from 'crypto';
 // Configura o armazenamento em disco
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Aponta para a pasta uploads que criamos na raiz do backend
+    // Aponta para a pasta uploads na raiz do backend
     cb(null, path.resolve(__dirname, '..', '..', 'uploads'));
   },
   filename: (req, file, cb) => {
-    // Gera um hash aleatório para evitar conflito de nomes de arquivos iguais
+    // Gera um hash aleatório para evitar conflito de nomes
     crypto.randomBytes(16, (err, hash) => {
       if (err) cb(err, file.fieldname);
       
@@ -19,9 +19,11 @@ const storage = multer.diskStorage({
   },
 });
 
-export const upload = multer({
+const upload = multer({
   storage,
   limits: {
     fileSize: 20 * 1024 * 1024, // Limite de 20MB por arquivo
   }
 });
+
+export default upload;

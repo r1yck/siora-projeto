@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { login } from '../controllers/authController';
+import { login, redefinirSenha } from '../controllers/authController';
 
 const router = Router();
 
-// Rota de login apontando diretamente para a função
 router.post('/login', login);
+router.patch('/primeiro-acesso', redefinirSenha);
 
 export default router;

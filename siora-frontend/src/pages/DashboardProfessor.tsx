@@ -35,9 +35,9 @@ export function DashboardProfessor() {
 
   useEffect(() => {
     // Proteção de rota à prova de falhas com tipos primitivos
-    if (!userString || (!userId && !matriculaSiape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) { 
-      window.location.href = '/login'; 
-      return; 
+    if (!userString || (!userId && !matriculaSiape) || (perfilDoUsuario !== 'PROFESSOR' && perfilDoUsuario !== 'DOCENTE')) {
+      window.location.href = '/login';
+      return;
     }
 
     async function fetchTurmas() {
@@ -56,7 +56,7 @@ export function DashboardProfessor() {
     if (userId) {
       fetchTurmas();
     }
-  // Mudamos a dependência para monitorar apenas variáveis de texto/número estáveis
+    // Mudamos a dependência para monitorar apenas variáveis de texto/número estáveis
   }, [userId, perfilDoUsuario, matriculaSiape, userString]);
 
   function handleLogout(e: React.MouseEvent) {
@@ -75,7 +75,7 @@ export function DashboardProfessor() {
         <img
           src={iconSiora}
           alt="Logo SIORA"
-          onClick={() => window.location.href = '/dashboard-professor'} 
+          onClick={() => window.location.href = '/dashboard-professor'}
           className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
         />
 

@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict iS6pBDFOy1zceBNEmTFHBnRW3juGmf4ywpt10DahOg4tdF7wlLAEVFxu1ZEFHCa
+\restrict zsMTyzHAzMGer8qpymHNfkXCl7pgIxarAZwkESKtfo16x4eHyCNGy8ObkxPJHh0
 
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
 
--- Started on 2026-07-17 19:43:21
+-- Started on 2026-07-22 01:48:03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,7 +22,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 873 (class 1247 OID 24578)
+-- TOC entry 875 (class 1247 OID 24578)
 -- Name: tipo_usuario_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -72,7 +72,7 @@ CREATE SEQUENCE public.atividades_id_seq
 ALTER SEQUENCE public.atividades_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5042 (class 0 OID 0)
+-- TOC entry 5061 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: atividades_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -114,7 +114,7 @@ CREATE SEQUENCE public.comunicados_id_seq
 ALTER SEQUENCE public.comunicados_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5043 (class 0 OID 0)
+-- TOC entry 5062 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: comunicados_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -156,7 +156,7 @@ CREATE SEQUENCE public.comunicados_mural_id_seq
 ALTER SEQUENCE public.comunicados_mural_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5044 (class 0 OID 0)
+-- TOC entry 5063 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: comunicados_mural_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -197,7 +197,7 @@ CREATE SEQUENCE public.disciplinas_id_seq
 ALTER SEQUENCE public.disciplinas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5045 (class 0 OID 0)
+-- TOC entry 5064 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: disciplinas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -252,7 +252,7 @@ CREATE SEQUENCE public.horarios_aula_id_seq
 ALTER SEQUENCE public.horarios_aula_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5046 (class 0 OID 0)
+-- TOC entry 5065 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: horarios_aula_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -294,7 +294,7 @@ CREATE SEQUENCE public.materiais_aula_id_seq
 ALTER SEQUENCE public.materiais_aula_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5047 (class 0 OID 0)
+-- TOC entry 5066 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: materiais_aula_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -333,7 +333,7 @@ CREATE SEQUENCE public.matriculas_id_seq
 ALTER SEQUENCE public.matriculas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5048 (class 0 OID 0)
+-- TOC entry 5067 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: matriculas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -352,6 +352,49 @@ CREATE TABLE public.professores (
 
 
 ALTER TABLE public.professores OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 33001)
+-- Name: submissoes_avaliacoes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.submissoes_avaliacoes (
+    id integer NOT NULL,
+    avaliacao_id integer NOT NULL,
+    estudante_id integer NOT NULL,
+    url_arquivo text NOT NULL,
+    nome_arquivo character varying(255) NOT NULL,
+    data_envio timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    nota numeric(4,2) DEFAULT NULL::numeric
+);
+
+
+ALTER TABLE public.submissoes_avaliacoes OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1259 OID 33000)
+-- Name: submissoes_avaliacoes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.submissoes_avaliacoes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.submissoes_avaliacoes_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5068 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: submissoes_avaliacoes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.submissoes_avaliacoes_id_seq OWNED BY public.submissoes_avaliacoes.id;
+
 
 --
 -- TOC entry 234 (class 1259 OID 24699)
@@ -387,7 +430,7 @@ CREATE SEQUENCE public.tarefas_privadas_id_seq
 ALTER SEQUENCE public.tarefas_privadas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5049 (class 0 OID 0)
+-- TOC entry 5069 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: tarefas_privadas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -405,7 +448,8 @@ CREATE TABLE public.usuarios (
     nome character varying(100) NOT NULL,
     matricula_siape character varying(100) CONSTRAINT usuarios_email_not_null NOT NULL,
     senha_hash character varying(255) NOT NULL,
-    tipo_usuario public.tipo_usuario_enum NOT NULL
+    tipo_usuario public.tipo_usuario_enum NOT NULL,
+    primeiro_acesso boolean DEFAULT true
 );
 
 
@@ -428,7 +472,7 @@ CREATE SEQUENCE public.usuarios_id_seq
 ALTER SEQUENCE public.usuarios_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5050 (class 0 OID 0)
+-- TOC entry 5070 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: usuarios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -437,7 +481,7 @@ ALTER SEQUENCE public.usuarios_id_seq OWNED BY public.usuarios.id;
 
 
 --
--- TOC entry 4813 (class 2604 OID 24663)
+-- TOC entry 4819 (class 2604 OID 24663)
 -- Name: avaliacoes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -445,7 +489,7 @@ ALTER TABLE ONLY public.avaliacoes ALTER COLUMN id SET DEFAULT nextval('public.a
 
 
 --
--- TOC entry 4814 (class 2604 OID 24682)
+-- TOC entry 4820 (class 2604 OID 24682)
 -- Name: comunicados id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -453,7 +497,7 @@ ALTER TABLE ONLY public.comunicados ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 4822 (class 2604 OID 32953)
+-- TOC entry 4828 (class 2604 OID 32953)
 -- Name: comunicados_mural id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -461,7 +505,7 @@ ALTER TABLE ONLY public.comunicados_mural ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 4810 (class 2604 OID 24623)
+-- TOC entry 4816 (class 2604 OID 24623)
 -- Name: disciplinas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -469,7 +513,7 @@ ALTER TABLE ONLY public.disciplinas ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 4819 (class 2604 OID 32919)
+-- TOC entry 4825 (class 2604 OID 32919)
 -- Name: horarios_aula id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -477,7 +521,7 @@ ALTER TABLE ONLY public.horarios_aula ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 4820 (class 2604 OID 32935)
+-- TOC entry 4826 (class 2604 OID 32935)
 -- Name: materiais_aula id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -485,7 +529,7 @@ ALTER TABLE ONLY public.materiais_aula ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 4812 (class 2604 OID 24641)
+-- TOC entry 4818 (class 2604 OID 24641)
 -- Name: matriculas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -493,7 +537,15 @@ ALTER TABLE ONLY public.matriculas ALTER COLUMN id SET DEFAULT nextval('public.m
 
 
 --
--- TOC entry 4817 (class 2604 OID 24702)
+-- TOC entry 4831 (class 2604 OID 33004)
+-- Name: submissoes_avaliacoes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.submissoes_avaliacoes ALTER COLUMN id SET DEFAULT nextval('public.submissoes_avaliacoes_id_seq'::regclass);
+
+
+--
+-- TOC entry 4823 (class 2604 OID 24702)
 -- Name: tarefas_privadas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -501,7 +553,7 @@ ALTER TABLE ONLY public.tarefas_privadas ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 4808 (class 2604 OID 24587)
+-- TOC entry 4813 (class 2604 OID 24587)
 -- Name: usuarios id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -509,7 +561,7 @@ ALTER TABLE ONLY public.usuarios ALTER COLUMN id SET DEFAULT nextval('public.usu
 
 
 --
--- TOC entry 5026 (class 0 OID 24660)
+-- TOC entry 5043 (class 0 OID 24660)
 -- Dependencies: 230
 -- Data for Name: avaliacoes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -519,7 +571,7 @@ COPY public.avaliacoes (id, titulo, descricao, data_vencimento, disciplina_id, p
 
 
 --
--- TOC entry 5028 (class 0 OID 24679)
+-- TOC entry 5045 (class 0 OID 24679)
 -- Dependencies: 232
 -- Data for Name: comunicados; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -529,7 +581,7 @@ COPY public.comunicados (id, titulo, conteudo, data_publicacao, urgente, discipl
 
 
 --
--- TOC entry 5036 (class 0 OID 32950)
+-- TOC entry 5053 (class 0 OID 32950)
 -- Dependencies: 240
 -- Data for Name: comunicados_mural; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -540,7 +592,7 @@ COPY public.comunicados_mural (id, disciplina_id, titulo, conteudo, data_publica
 
 
 --
--- TOC entry 5022 (class 0 OID 24620)
+-- TOC entry 5039 (class 0 OID 24620)
 -- Dependencies: 226
 -- Data for Name: disciplinas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -575,7 +627,7 @@ COPY public.disciplinas (id, nome, codigo_turma, professor_id, semestre) FROM st
 
 
 --
--- TOC entry 5019 (class 0 OID 24597)
+-- TOC entry 5036 (class 0 OID 24597)
 -- Dependencies: 223
 -- Data for Name: estudantes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -662,7 +714,7 @@ COPY public.estudantes (usuario_id, semestre_atual) FROM stdin;
 
 
 --
--- TOC entry 5032 (class 0 OID 32916)
+-- TOC entry 5049 (class 0 OID 32916)
 -- Dependencies: 236
 -- Data for Name: horarios_aula; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -711,8 +763,6 @@ COPY public.horarios_aula (id, disciplina_id, dia_semana, hora_inicio, hora_fim,
 48	54130	SEXTA-FEIRA	07:30:00	09:30:00	\N
 49	54129	SEXTA-FEIRA	09:50:00	11:50:00	\N
 47	54130	QUINTA-FEIRA	13:30:00	16:50:00	\N
-35	54134	QUARTA-FEIRA	07:30:00	09:30:00	Lab 117
-38	54134	QUINTA-FEIRA	09:50:00	11:50:00	Lab 117
 44	54125	QUARTA-FEIRA	09:50:00	11:50:00	Lab 117
 45	54125	QUINTA-FEIRA	07:30:00	09:30:00	Lab 117
 37	54133	QUINTA-FEIRA	07:30:00	09:30:00	Lab 124
@@ -743,22 +793,23 @@ COPY public.horarios_aula (id, disciplina_id, dia_semana, hora_inicio, hora_fim,
 79	54121	SEGUNDA-FEIRA	13:30:00	16:50:00	\N
 81	54123	QUINTA-FEIRA	13:30:00	16:50:00	\N
 82	54123	TERÇA-FEIRA	15:50:00	17:50:00	\N
+35	54134	QUARTA-FEIRA	07:30:00	09:30:00	teste
+38	54134	QUINTA-FEIRA	09:50:00	11:50:00	teste
 \.
 
 
 --
--- TOC entry 5034 (class 0 OID 32932)
+-- TOC entry 5051 (class 0 OID 32932)
 -- Dependencies: 238
 -- Data for Name: materiais_aula; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.materiais_aula (id, disciplina_id, nome_arquivo, tamanho, url_caminho, data_upload) FROM stdin;
-1	54134	Aula 04 - Slides_Motores_Graficos.pdf	4.2 MB	/uploads/jogos/aula04.pdf	2026-07-13 15:20:19.434164
 \.
 
 
 --
--- TOC entry 5024 (class 0 OID 24638)
+-- TOC entry 5041 (class 0 OID 24638)
 -- Dependencies: 228
 -- Data for Name: matriculas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1151,7 +1202,7 @@ COPY public.matriculas (id, estudante_id, disciplina_id) FROM stdin;
 
 
 --
--- TOC entry 5020 (class 0 OID 24608)
+-- TOC entry 5037 (class 0 OID 24608)
 -- Dependencies: 224
 -- Data for Name: professores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1176,7 +1227,17 @@ COPY public.professores (usuario_id) FROM stdin;
 
 
 --
--- TOC entry 5030 (class 0 OID 24699)
+-- TOC entry 5055 (class 0 OID 33001)
+-- Dependencies: 242
+-- Data for Name: submissoes_avaliacoes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.submissoes_avaliacoes (id, avaliacao_id, estudante_id, url_arquivo, nome_arquivo, data_envio, nota) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5047 (class 0 OID 24699)
 -- Dependencies: 234
 -- Data for Name: tarefas_privadas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1186,127 +1247,127 @@ COPY public.tarefas_privadas (id, titulo, descricao, data_limite, concluida, est
 
 
 --
--- TOC entry 5018 (class 0 OID 24584)
+-- TOC entry 5035 (class 0 OID 24584)
 -- Dependencies: 222
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario) FROM stdin;
-3	Samuel Santos Oliveira	prof.samuel@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-4	Alexandre dos Santos Coqueiro	20251ITA01GB0029	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-5	Anthony Leite Santana	20251ITA01GB0021	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-6	Arthur Lima Freire da Silva	20251ITA01GB0026	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-20	Raul Teixeira Trindade	20251ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-21	Riquelme de Jesus Ferreira	20251ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-22	Ruan dos Santos Oliveira	20251ITA01GB0016	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-23	Ryan Limoeiro Miranda	20251ITA01GB0035	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-24	Samuel Cotrim Santos Luz	20251ITA01GB0017	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-25	Tales Veríssimo Mota	20251ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-26	Túlio Silva Sotero	20251ITA01GB0020	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-27	Willem Moreira de Araújo	20251ITA01GB0039	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-28	Ycaro Vagner Rocha Pereira	20251ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-29	Camila Nunes Duarte Silveira	prof.camila@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-30	Lays Silva Santos	prof.lays@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-31	Fabricio Pereira da Silva	prof.fabricio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-32	Amilly Moreira Nolasco	20241ITA01GB0003	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-33	Luan Rikelmo Santana Cordeiro	20241ITA01GB0042	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-34	Michel Júnior Ferreira	20241ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-35	Murillo Santos Lima	20241ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-36	Pedro Lucca Pires Lima e Silva	20221ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-37	Vinicius Morais Viana de Sá	20221ITA01GB0007	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-38	Clesio Rubens de Matos	prof.clesio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-39	Alison Ferreira dos Santos	20241ITA01GB0025	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-40	Ellen Costa Cardoso	20241ITA01GB0021	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-41	Ney Aldrin Caldas Lima	20241ITA01GB0040	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-42	Sarah Santos Braga Souza	20241ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-43	Camila Fonseca Lopes Brandao	prof.camila.brandao@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-44	Daniel Sampaio Rocha	20221ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-45	Kauan Vasconcelos Gomes	20241ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-46	Kauã Santos Souza	20221ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-47	Antonio Cesar Souza dos Santos	prof.antonio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-48	Ígor Dias Campos	20221ITA01GB0011	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-49	Rhyan Matheus Grisante dos Santos	20251ITA01GB0027	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-50	Francisco Helio de Oliveira	prof.francisco@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-51	Antônio Paulo Pinto Lima Silva	20241ITA01GB0001	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-52	Arthur dos Santos Coqueiro	20211ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-53	Bruno Sousa da Silva	20211ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-54	Crístian Batista Souto	20231ITA01GB0027	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-55	Cristyan Alves de Oliveira Almeida	20241ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-56	Eduardo Leite Lapa Canguçu	20241ITA01GB0020	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-57	Eloiza Pereira Silva	20241ITA01GB0029	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-58	Guilherme Dias do Nascimento	20241ITA01GB0002	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-59	Hugo Santos Barros	20241ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-60	Juan Pablo de Aquino Salgado	20241ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-61	Leonardo Abrantes Santos	20241ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-62	Matheus Lucas Campos	20241ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-63	Ruan Rocha Carvalho Dutra	20241ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-64	Ycaro Batista da Mota	20241ITA01GB0011	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-65	Eber Chagas Santos	prof.eber@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-66	Gisele Bonfim Lima Pacheco	prof.gisele@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-67	Emanuel Brito da Silva	20211ITA01GB0017	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-68	Israel Freire dos Santos	20231ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-7	Fernanda Campos Vieira	20251ITA01GB0031	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-8	Guilherme Carlos da Silva dos Santos	20251ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-9	Guilherme Moreira Dias	20251ITA01GB0038	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-10	Gustavo Lima Coqueiro	20251ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-11	Henrique Alves Araujo	20251ITA01GB0006	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-12	Higor Amarante Barbosa	20251ITA01GB0025	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-13	Kauan Silva Oliveira	20251ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-14	Lucas Santos Alves	20251ITA01GB0010	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-15	Maria Eduarda Soares Andrade	20251ITA01GB0030	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-16	Pedro Carlos Fernandes Nascimento	20251ITA01GB0036	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-17	Pedro Henrique Gomes Oliveira Pereira	20251ITA01GB0022	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-18	Pedro Lucas Oliveira Pedroso	20251ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-19	Plínio Reisdorfer Neto	20251ITA01GB0013	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-69	Leonardo de Oliveira Silva	20241ITA01GB0033	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-70	Tainá Barreto da Silva	20211ITA01GB0013	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-71	Hudson Barros Oliveira	prof.hudson@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-72	Diogo Carneiro Limeira	20231ITA01GB0006	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-73	Ryan Araújo Veiga Freitas	20231ITA01GB0022	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-76	Heverton Santos Queiroz	prof.heverton@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-77	Almerinda de Araújo Gomes Rocha	20231ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-78	Breno Gomes Pires de Oliveira	20231ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-1	Henrique Fontoura Alves de Araújo	20221ITA01GB0006	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-79	Roberto Guimarães Santos	20231ITA01GB0019	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-80	Silas Correia Leite da Silva	20231ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-81	Werner Gomes Pires de Oliveira	20231ITA01GB0016	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-82	Felipe Moreira Mares	20211ITA01GB0007	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-83	Fabio dos Santos Lima	prof.fabio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-84	Amanda Tavares Santos	20221ITA01GB0001	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-85	Henrique da Silva dos Santos	20221ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-86	Chaielle Emille Souza Brandão	20221ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-87	Geovanna Alves dos Santos	20211ITA01GB0041	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-88	Leonardo Carvalho de Melo Barreto	20221ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-89	Maria Fernanda Fernandes de Souza	20221ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-90	Natanael dos Santos Gonçalves	20221ITA01GB0003	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-91	Roberta Mercia Rodrigues de Oliveira	prof.roberta@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
-92	Adimael Santos da Silva	20211ITA01GB0034	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-93	Bruno Flores Silva	20221ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-94	Hércules da Silva Santos	20221ITA01GB0028	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE
-95	Hudson Antonio Alves da Silva	prof.hudson.antonio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR
+COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario, primeiro_acesso) FROM stdin;
+3	Samuel Santos Oliveira	prof.samuel@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+4	Alexandre dos Santos Coqueiro	20251ITA01GB0029	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+5	Anthony Leite Santana	20251ITA01GB0021	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+32	Amilly Moreira Nolasco	20241ITA01GB0003	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+33	Luan Rikelmo Santana Cordeiro	20241ITA01GB0042	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+34	Michel Júnior Ferreira	20241ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+35	Murillo Santos Lima	20241ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+36	Pedro Lucca Pires Lima e Silva	20221ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+37	Vinicius Morais Viana de Sá	20221ITA01GB0007	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+38	Clesio Rubens de Matos	prof.clesio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+39	Alison Ferreira dos Santos	20241ITA01GB0025	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+40	Ellen Costa Cardoso	20241ITA01GB0021	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+41	Ney Aldrin Caldas Lima	20241ITA01GB0040	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+42	Sarah Santos Braga Souza	20241ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+43	Camila Fonseca Lopes Brandao	prof.camila.brandao@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+44	Daniel Sampaio Rocha	20221ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+45	Kauan Vasconcelos Gomes	20241ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+46	Kauã Santos Souza	20221ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+47	Antonio Cesar Souza dos Santos	prof.antonio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+48	Ígor Dias Campos	20221ITA01GB0011	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+49	Rhyan Matheus Grisante dos Santos	20251ITA01GB0027	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+50	Francisco Helio de Oliveira	prof.francisco@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+51	Antônio Paulo Pinto Lima Silva	20241ITA01GB0001	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+52	Arthur dos Santos Coqueiro	20211ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+53	Bruno Sousa da Silva	20211ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+54	Crístian Batista Souto	20231ITA01GB0027	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+55	Cristyan Alves de Oliveira Almeida	20241ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+56	Eduardo Leite Lapa Canguçu	20241ITA01GB0020	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+57	Eloiza Pereira Silva	20241ITA01GB0029	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+58	Guilherme Dias do Nascimento	20241ITA01GB0002	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+59	Hugo Santos Barros	20241ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+60	Juan Pablo de Aquino Salgado	20241ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+72	Diogo Carneiro Limeira	20231ITA01GB0006	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+73	Ryan Araújo Veiga Freitas	20231ITA01GB0022	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+77	Almerinda de Araújo Gomes Rocha	20231ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+78	Breno Gomes Pires de Oliveira	20231ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+6	Arthur Lima Freire da Silva	20251ITA01GB0026	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+20	Raul Teixeira Trindade	20251ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+21	Riquelme de Jesus Ferreira	20251ITA01GB0014	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+22	Ruan dos Santos Oliveira	20251ITA01GB0016	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+23	Ryan Limoeiro Miranda	20251ITA01GB0035	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+24	Samuel Cotrim Santos Luz	20251ITA01GB0017	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+25	Tales Veríssimo Mota	20251ITA01GB0018	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+26	Túlio Silva Sotero	20251ITA01GB0020	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+27	Willem Moreira de Araújo	20251ITA01GB0039	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+28	Ycaro Vagner Rocha Pereira	20251ITA01GB0037	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+29	Camila Nunes Duarte Silveira	prof.camila@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+30	Lays Silva Santos	prof.lays@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+31	Fabricio Pereira da Silva	prof.fabricio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+76	Heverton Santos Queiroz	prof.heverton@ifbaiano.edu.br	$2b$10$MYJzKI66f.Fi2Lk2mfbrwORUzvCdWinfNn178wx4k0OVhcVE9HDie	PROFESSOR	t
+61	Leonardo Abrantes Santos	20241ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+62	Matheus Lucas Campos	20241ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+63	Ruan Rocha Carvalho Dutra	20241ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+64	Ycaro Batista da Mota	20241ITA01GB0011	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+65	Eber Chagas Santos	prof.eber@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+66	Gisele Bonfim Lima Pacheco	prof.gisele@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+67	Emanuel Brito da Silva	20211ITA01GB0017	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+68	Israel Freire dos Santos	20231ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+7	Fernanda Campos Vieira	20251ITA01GB0031	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+8	Guilherme Carlos da Silva dos Santos	20251ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+9	Guilherme Moreira Dias	20251ITA01GB0038	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+10	Gustavo Lima Coqueiro	20251ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+11	Henrique Alves Araujo	20251ITA01GB0006	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+12	Higor Amarante Barbosa	20251ITA01GB0025	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+13	Kauan Silva Oliveira	20251ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+14	Lucas Santos Alves	20251ITA01GB0010	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+15	Maria Eduarda Soares Andrade	20251ITA01GB0030	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+16	Pedro Carlos Fernandes Nascimento	20251ITA01GB0036	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+17	Pedro Henrique Gomes Oliveira Pereira	20251ITA01GB0022	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+18	Pedro Lucas Oliveira Pedroso	20251ITA01GB0012	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+19	Plínio Reisdorfer Neto	20251ITA01GB0013	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+69	Leonardo de Oliveira Silva	20241ITA01GB0033	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+70	Tainá Barreto da Silva	20211ITA01GB0013	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+71	Hudson Barros Oliveira	prof.hudson@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+79	Roberto Guimarães Santos	20231ITA01GB0019	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+80	Silas Correia Leite da Silva	20231ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+81	Werner Gomes Pires de Oliveira	20231ITA01GB0016	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+82	Felipe Moreira Mares	20211ITA01GB0007	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+83	Fabio dos Santos Lima	prof.fabio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+84	Amanda Tavares Santos	20221ITA01GB0001	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+85	Henrique da Silva dos Santos	20221ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+86	Chaielle Emille Souza Brandão	20221ITA01GB0015	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+87	Geovanna Alves dos Santos	20211ITA01GB0041	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+88	Leonardo Carvalho de Melo Barreto	20221ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+89	Maria Fernanda Fernandes de Souza	20221ITA01GB0004	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+90	Natanael dos Santos Gonçalves	20221ITA01GB0003	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+91	Roberta Mercia Rodrigues de Oliveira	prof.roberta@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+92	Adimael Santos da Silva	20211ITA01GB0034	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+93	Bruno Flores Silva	20221ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+94	Hércules da Silva Santos	20221ITA01GB0028	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
+95	Hudson Antonio Alves da Silva	prof.hudson.antonio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+1	Henrique Fontoura Alves de Araújo	20221ITA01GB0006	$2b$10$JkykDqssvlaVJpBo6DgaH.W80zsdcInCH26TlYGnjO8qH6I/XFNpK	ESTUDANTE	t
 \.
 
 
 --
--- TOC entry 5051 (class 0 OID 0)
+-- TOC entry 5071 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: atividades_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.atividades_id_seq', 6, true);
+SELECT pg_catalog.setval('public.atividades_id_seq', 11, true);
 
 
 --
--- TOC entry 5052 (class 0 OID 0)
+-- TOC entry 5072 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: comunicados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.comunicados_id_seq', 1, false);
+SELECT pg_catalog.setval('public.comunicados_id_seq', 9, true);
 
 
 --
--- TOC entry 5053 (class 0 OID 0)
+-- TOC entry 5073 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: comunicados_mural_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1315,7 +1376,7 @@ SELECT pg_catalog.setval('public.comunicados_mural_id_seq', 1, true);
 
 
 --
--- TOC entry 5054 (class 0 OID 0)
+-- TOC entry 5074 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: disciplinas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1324,7 +1385,7 @@ SELECT pg_catalog.setval('public.disciplinas_id_seq', 1, false);
 
 
 --
--- TOC entry 5055 (class 0 OID 0)
+-- TOC entry 5075 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: horarios_aula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1333,16 +1394,16 @@ SELECT pg_catalog.setval('public.horarios_aula_id_seq', 85, true);
 
 
 --
--- TOC entry 5056 (class 0 OID 0)
+-- TOC entry 5076 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: materiais_aula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.materiais_aula_id_seq', 1, true);
+SELECT pg_catalog.setval('public.materiais_aula_id_seq', 5, true);
 
 
 --
--- TOC entry 5057 (class 0 OID 0)
+-- TOC entry 5077 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: matriculas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1351,16 +1412,25 @@ SELECT pg_catalog.setval('public.matriculas_id_seq', 383, true);
 
 
 --
--- TOC entry 5058 (class 0 OID 0)
+-- TOC entry 5078 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: submissoes_avaliacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.submissoes_avaliacoes_id_seq', 1, true);
+
+
+--
+-- TOC entry 5079 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: tarefas_privadas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tarefas_privadas_id_seq', 18, true);
+SELECT pg_catalog.setval('public.tarefas_privadas_id_seq', 20, true);
 
 
 --
--- TOC entry 5059 (class 0 OID 0)
+-- TOC entry 5080 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1369,7 +1439,7 @@ SELECT pg_catalog.setval('public.usuarios_id_seq', 95, true);
 
 
 --
--- TOC entry 4845 (class 2606 OID 24672)
+-- TOC entry 4854 (class 2606 OID 24672)
 -- Name: avaliacoes atividades_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1378,7 +1448,7 @@ ALTER TABLE ONLY public.avaliacoes
 
 
 --
--- TOC entry 4858 (class 2606 OID 32962)
+-- TOC entry 4867 (class 2606 OID 32962)
 -- Name: comunicados_mural comunicados_mural_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1387,7 +1457,7 @@ ALTER TABLE ONLY public.comunicados_mural
 
 
 --
--- TOC entry 4848 (class 2606 OID 24692)
+-- TOC entry 4857 (class 2606 OID 24692)
 -- Name: comunicados comunicados_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1396,7 +1466,7 @@ ALTER TABLE ONLY public.comunicados
 
 
 --
--- TOC entry 4835 (class 2606 OID 24631)
+-- TOC entry 4844 (class 2606 OID 24631)
 -- Name: disciplinas disciplinas_codigo_turma_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1405,7 +1475,7 @@ ALTER TABLE ONLY public.disciplinas
 
 
 --
--- TOC entry 4837 (class 2606 OID 24629)
+-- TOC entry 4846 (class 2606 OID 24629)
 -- Name: disciplinas disciplinas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1414,7 +1484,7 @@ ALTER TABLE ONLY public.disciplinas
 
 
 --
--- TOC entry 4840 (class 2606 OID 24648)
+-- TOC entry 4849 (class 2606 OID 24648)
 -- Name: matriculas estudante_disciplina_unico; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1423,7 +1493,7 @@ ALTER TABLE ONLY public.matriculas
 
 
 --
--- TOC entry 4831 (class 2606 OID 24602)
+-- TOC entry 4840 (class 2606 OID 24602)
 -- Name: estudantes estudantes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1432,7 +1502,7 @@ ALTER TABLE ONLY public.estudantes
 
 
 --
--- TOC entry 4854 (class 2606 OID 32925)
+-- TOC entry 4863 (class 2606 OID 32925)
 -- Name: horarios_aula horarios_aula_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1441,7 +1511,7 @@ ALTER TABLE ONLY public.horarios_aula
 
 
 --
--- TOC entry 4856 (class 2606 OID 32943)
+-- TOC entry 4865 (class 2606 OID 32943)
 -- Name: materiais_aula materiais_aula_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1450,7 +1520,7 @@ ALTER TABLE ONLY public.materiais_aula
 
 
 --
--- TOC entry 4843 (class 2606 OID 24646)
+-- TOC entry 4852 (class 2606 OID 24646)
 -- Name: matriculas matriculas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1459,7 +1529,7 @@ ALTER TABLE ONLY public.matriculas
 
 
 --
--- TOC entry 4833 (class 2606 OID 24613)
+-- TOC entry 4842 (class 2606 OID 24613)
 -- Name: professores professores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1468,7 +1538,25 @@ ALTER TABLE ONLY public.professores
 
 
 --
--- TOC entry 4852 (class 2606 OID 24710)
+-- TOC entry 4871 (class 2606 OID 33017)
+-- Name: submissoes_avaliacoes submissao_estudante_avaliacao_unica; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.submissoes_avaliacoes
+    ADD CONSTRAINT submissao_estudante_avaliacao_unica UNIQUE (avaliacao_id, estudante_id);
+
+
+--
+-- TOC entry 4873 (class 2606 OID 33015)
+-- Name: submissoes_avaliacoes submissoes_avaliacoes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.submissoes_avaliacoes
+    ADD CONSTRAINT submissoes_avaliacoes_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4861 (class 2606 OID 24710)
 -- Name: tarefas_privadas tarefas_privadas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1477,7 +1565,7 @@ ALTER TABLE ONLY public.tarefas_privadas
 
 
 --
--- TOC entry 4827 (class 2606 OID 24596)
+-- TOC entry 4836 (class 2606 OID 24596)
 -- Name: usuarios usuarios_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1486,7 +1574,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4829 (class 2606 OID 24594)
+-- TOC entry 4838 (class 2606 OID 24594)
 -- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1495,7 +1583,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4846 (class 1259 OID 24719)
+-- TOC entry 4855 (class 1259 OID 24719)
 -- Name: idx_atividades_disciplina; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1503,7 +1591,7 @@ CREATE INDEX idx_atividades_disciplina ON public.avaliacoes USING btree (discipl
 
 
 --
--- TOC entry 4849 (class 1259 OID 24720)
+-- TOC entry 4858 (class 1259 OID 24720)
 -- Name: idx_comunicados_disciplina; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1511,7 +1599,7 @@ CREATE INDEX idx_comunicados_disciplina ON public.comunicados USING btree (disci
 
 
 --
--- TOC entry 4838 (class 1259 OID 24717)
+-- TOC entry 4847 (class 1259 OID 24717)
 -- Name: idx_disciplinas_professor; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1519,7 +1607,7 @@ CREATE INDEX idx_disciplinas_professor ON public.disciplinas USING btree (profes
 
 
 --
--- TOC entry 4841 (class 1259 OID 24718)
+-- TOC entry 4850 (class 1259 OID 24718)
 -- Name: idx_matriculas_estudante; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1527,7 +1615,23 @@ CREATE INDEX idx_matriculas_estudante ON public.matriculas USING btree (estudant
 
 
 --
--- TOC entry 4850 (class 1259 OID 24721)
+-- TOC entry 4868 (class 1259 OID 33028)
+-- Name: idx_submissoes_avaliacao; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_submissoes_avaliacao ON public.submissoes_avaliacoes USING btree (avaliacao_id);
+
+
+--
+-- TOC entry 4869 (class 1259 OID 33029)
+-- Name: idx_submissoes_estudante; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_submissoes_estudante ON public.submissoes_avaliacoes USING btree (estudante_id);
+
+
+--
+-- TOC entry 4859 (class 1259 OID 24721)
 -- Name: idx_tarefas_estudante; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1535,7 +1639,7 @@ CREATE INDEX idx_tarefas_estudante ON public.tarefas_privadas USING btree (estud
 
 
 --
--- TOC entry 4825 (class 1259 OID 24716)
+-- TOC entry 4834 (class 1259 OID 24716)
 -- Name: idx_usuarios_email; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1543,7 +1647,7 @@ CREATE INDEX idx_usuarios_email ON public.usuarios USING btree (matricula_siape)
 
 
 --
--- TOC entry 4864 (class 2606 OID 24673)
+-- TOC entry 4879 (class 2606 OID 24673)
 -- Name: avaliacoes atividades_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1552,7 +1656,7 @@ ALTER TABLE ONLY public.avaliacoes
 
 
 --
--- TOC entry 4865 (class 2606 OID 24693)
+-- TOC entry 4880 (class 2606 OID 24693)
 -- Name: comunicados comunicados_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1561,7 +1665,7 @@ ALTER TABLE ONLY public.comunicados
 
 
 --
--- TOC entry 4869 (class 2606 OID 32963)
+-- TOC entry 4884 (class 2606 OID 32963)
 -- Name: comunicados_mural comunicados_mural_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1570,7 +1674,7 @@ ALTER TABLE ONLY public.comunicados_mural
 
 
 --
--- TOC entry 4861 (class 2606 OID 24632)
+-- TOC entry 4876 (class 2606 OID 24632)
 -- Name: disciplinas disciplinas_professor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1579,7 +1683,7 @@ ALTER TABLE ONLY public.disciplinas
 
 
 --
--- TOC entry 4859 (class 2606 OID 24603)
+-- TOC entry 4874 (class 2606 OID 24603)
 -- Name: estudantes estudantes_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1588,7 +1692,25 @@ ALTER TABLE ONLY public.estudantes
 
 
 --
--- TOC entry 4867 (class 2606 OID 32926)
+-- TOC entry 4885 (class 2606 OID 33018)
+-- Name: submissoes_avaliacoes fk_submissao_avaliacao; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.submissoes_avaliacoes
+    ADD CONSTRAINT fk_submissao_avaliacao FOREIGN KEY (avaliacao_id) REFERENCES public.avaliacoes(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4886 (class 2606 OID 33023)
+-- Name: submissoes_avaliacoes fk_submissao_estudante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.submissoes_avaliacoes
+    ADD CONSTRAINT fk_submissao_estudante FOREIGN KEY (estudante_id) REFERENCES public.estudantes(usuario_id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4882 (class 2606 OID 32926)
 -- Name: horarios_aula horarios_aula_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1597,7 +1719,7 @@ ALTER TABLE ONLY public.horarios_aula
 
 
 --
--- TOC entry 4868 (class 2606 OID 32944)
+-- TOC entry 4883 (class 2606 OID 32944)
 -- Name: materiais_aula materiais_aula_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1606,7 +1728,7 @@ ALTER TABLE ONLY public.materiais_aula
 
 
 --
--- TOC entry 4862 (class 2606 OID 24654)
+-- TOC entry 4877 (class 2606 OID 24654)
 -- Name: matriculas matriculas_disciplina_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1615,7 +1737,7 @@ ALTER TABLE ONLY public.matriculas
 
 
 --
--- TOC entry 4863 (class 2606 OID 24649)
+-- TOC entry 4878 (class 2606 OID 24649)
 -- Name: matriculas matriculas_estudante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1624,7 +1746,7 @@ ALTER TABLE ONLY public.matriculas
 
 
 --
--- TOC entry 4860 (class 2606 OID 24614)
+-- TOC entry 4875 (class 2606 OID 24614)
 -- Name: professores professores_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1633,7 +1755,7 @@ ALTER TABLE ONLY public.professores
 
 
 --
--- TOC entry 4866 (class 2606 OID 24711)
+-- TOC entry 4881 (class 2606 OID 24711)
 -- Name: tarefas_privadas tarefas_privadas_estudante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1641,11 +1763,11 @@ ALTER TABLE ONLY public.tarefas_privadas
     ADD CONSTRAINT tarefas_privadas_estudante_id_fkey FOREIGN KEY (estudante_id) REFERENCES public.estudantes(usuario_id) ON DELETE CASCADE;
 
 
--- Completed on 2026-07-17 19:43:22
+-- Completed on 2026-07-22 01:48:03
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict iS6pBDFOy1zceBNEmTFHBnRW3juGmf4ywpt10DahOg4tdF7wlLAEVFxu1ZEFHCa
+\unrestrict zsMTyzHAzMGer8qpymHNfkXCl7pgIxarAZwkESKtfo16x4eHyCNGy8ObkxPJHh0
 

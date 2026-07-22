@@ -258,3 +258,35 @@ export const removeMaterialDocente = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Erro interno ao deletar arquivo.' });
   }
 };
+
+// Controller para atualizar localização/laboratório em tempo real (RF04)
+export const updateLocalizacaoDocente = async (req: Request, res: Response) => {
+  try {
+    const { disciplina_id, laboratorio } = req.body;
+
+    if (!disciplina_id || !laboratorio) {
+      return res.status(400).json({ error: 'ID da disciplina e laboratório/sala são obrigatórios.' });
+    }
+
+    const horarioAtualizado = await dashboardModel.updateLaboratorioDisciplina(
+      Number(disciplina_id),
+      laboratorio
+    );
+
+    // Cria automaticamente o aviso de mudança de sala no mural com flag urgente (RF04)
+    await dashboardModel.createComunicado(
+      Number(disciplina_id),
+      'Atenção: Mudança de Sala/Laboratório',
+      `A aula de hoje será no ${laboratorio}.`,
+      true
+    );
+
+    return res.status(200).json({
+      message: 'Localização atualizada com sucesso!',
+      horarioAtualizado
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar localização:', error);
+    return res.status(500).json({ error: 'Erro interno ao atualizar localização.' });
+  }
+};

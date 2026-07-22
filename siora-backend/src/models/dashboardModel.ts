@@ -95,13 +95,12 @@ export const deleteTarefaPrivada = async (tarefaId: number, estudanteId: number)
   await pool.query(query, [tarefaId, estudanteId]);
 };
 
-export const getDetalhesDisciplina = async (disciplinaId: number) => {
+export const getDetalhesDisciplina = async (disciplinaId: number | string) => {
   const query = `
     SELECT d.id, d.nome, d.codigo_turma, u.nome AS professor_nome
     FROM public.disciplinas d
-    INNER JOIN public.professores p ON d.professor_id = p.usuario_id
-    INNER JOIN public.usuarios u ON p.usuario_id = u.id
-    WHERE d.id = $1;
+    INNER JOIN public.usuarios u ON d.professor_id = u.id
+    WHERE d.id = $1 OR d.codigo_turma = $1::text;
   `;
   const { rows } = await pool.query(query, [disciplinaId]);
   return rows[0];
@@ -188,5 +187,30 @@ export const createMaterialAula = async (disciplinaId: number, nomeArquivo: stri
 export const deleteMaterialAula = async (id: number) => {
   const query = `DELETE FROM public.materiais_aula WHERE id = $1 RETURNING *;`;
   const { rows } = await pool.query(query, [id]);
+  return rows[0];
+};
+
+// Atualizar o laboratório/sala de uma aula da disciplina (RF04 - Professor)
+export const updateLaboratorioDisciplina = async (disciplinaId: number, novoLaboratorio: string) => {
+  const query = `
+    UPDATE public.horarios_aula
+    SET laboratorio = $1
+    WHERE disciplina_id = $2
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [novoLaboratorio, disciplinaId]);
+  return rows;
+};
+
+// Buscar aviso urgente de troca de sala ou comunicado topo do aluno (RF04)
+export const getAvisoUrgenteDisciplina = async (disciplinaId: number) => {
+  const query = `
+    SELECT id, titulo, conteudo, data_publicacao
+    FROM public.comunicados
+    WHERE disciplina_id = $1 AND urgente = true
+    ORDER BY data_publicacao DESC
+    LIMIT 1;
+  `;
+  const { rows } = await pool.query(query, [disciplinaId]);
   return rows[0];
 };

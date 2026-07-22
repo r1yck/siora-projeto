@@ -12,17 +12,16 @@ import {
   postAvaliacaoDocente,
   removeComunicadoDocente,
   removeAvaliacaoDocente,
-  removeMaterialDocente
+  removeMaterialDocente,
+  postMaterialDocente,
+  updateLocalizacaoDocente 
 } from '../controllers/dashboardController';
-import { upload } from '../config/multer';
-import { postMaterialDocente } from '../controllers/dashboardController';
+import upload from '../config/multer';
 
 const router = Router();
 
 router.get('/aluno/:alunoId/disciplinas', getDisciplinasAluno);
-
 router.get('/aluno/:alunoId/horarios', getHorariosAluno);
-
 router.get('/professor/:professorId/turmas', getTurmasProfessor);
 
 router.get('/calendario', getCalendarioMetas);
@@ -38,5 +37,7 @@ router.delete('/professor/comunicado/:id', removeComunicadoDocente);
 router.delete('/professor/avaliacao/:id', removeAvaliacaoDocente);
 router.post('/professor/material', upload.single('file'), postMaterialDocente);
 router.delete('/professor/material/:id', removeMaterialDocente);
+
+router.patch('/professor/localizacao', updateLocalizacaoDocente);
 
 export default router;
