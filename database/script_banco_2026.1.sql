@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict zsMTyzHAzMGer8qpymHNfkXCl7pgIxarAZwkESKtfo16x4eHyCNGy8ObkxPJHh0
+\restrict yt3UmxtcLBs5ZssTI8lHoStePPV0afsPrALNR8zZiaIp5pJF5u1jGiyUVF7IWO5
 
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
 
--- Started on 2026-07-22 01:48:03
+-- Started on 2026-07-22 02:44:27
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -577,6 +577,7 @@ COPY public.avaliacoes (id, titulo, descricao, data_vencimento, disciplina_id, p
 --
 
 COPY public.comunicados (id, titulo, conteudo, data_publicacao, urgente, disciplina_id) FROM stdin;
+13	Atenção: Mudança de Sala/Laboratório	A aula de hoje será no Laboratório 124.	2026-07-22 02:27:40.504092	t	54134
 \.
 
 
@@ -793,8 +794,8 @@ COPY public.horarios_aula (id, disciplina_id, dia_semana, hora_inicio, hora_fim,
 79	54121	SEGUNDA-FEIRA	13:30:00	16:50:00	\N
 81	54123	QUINTA-FEIRA	13:30:00	16:50:00	\N
 82	54123	TERÇA-FEIRA	15:50:00	17:50:00	\N
-35	54134	QUARTA-FEIRA	07:30:00	09:30:00	teste
-38	54134	QUINTA-FEIRA	09:50:00	11:50:00	teste
+35	54134	QUARTA-FEIRA	07:30:00	09:30:00	Laboratório 124
+38	54134	QUINTA-FEIRA	09:50:00	11:50:00	Laboratório 124
 \.
 
 
@@ -1302,7 +1303,7 @@ COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario, prime
 29	Camila Nunes Duarte Silveira	prof.camila@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
 30	Lays Silva Santos	prof.lays@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
 31	Fabricio Pereira da Silva	prof.fabricio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
-76	Heverton Santos Queiroz	prof.heverton@ifbaiano.edu.br	$2b$10$MYJzKI66f.Fi2Lk2mfbrwORUzvCdWinfNn178wx4k0OVhcVE9HDie	PROFESSOR	t
+76	Heverton Santos Queiroz	prof.heverton@ifbaiano.edu.br	$2b$10$EXz1Pu/Oc4USUSDr5l0hkOYd300Hamhthgnl5FMYxtyKohy7/1v/y	PROFESSOR	t
 61	Leonardo Abrantes Santos	20241ITA01GB0005	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 62	Matheus Lucas Campos	20241ITA01GB0032	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 63	Ruan Rocha Carvalho Dutra	20241ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
@@ -1327,6 +1328,7 @@ COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario, prime
 69	Leonardo de Oliveira Silva	20241ITA01GB0033	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 70	Tainá Barreto da Silva	20211ITA01GB0013	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 71	Hudson Barros Oliveira	prof.hudson@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
+1	Henrique Fontoura Alves de Araújo	20221ITA01GB0006	$2b$10$RqFlWozJt0bRecLdmYfZAevJq/3qlHWh2nQFkvSSQDCEEWISZQLBq	ESTUDANTE	t
 79	Roberto Guimarães Santos	20231ITA01GB0019	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 80	Silas Correia Leite da Silva	20231ITA01GB0008	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 81	Werner Gomes Pires de Oliveira	20231ITA01GB0016	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
@@ -1344,7 +1346,6 @@ COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario, prime
 93	Bruno Flores Silva	20221ITA01GB0009	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 94	Hércules da Silva Santos	20221ITA01GB0028	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	ESTUDANTE	t
 95	Hudson Antonio Alves da Silva	prof.hudson.antonio@ifbaiano.edu.br	$2b$10$5dYahPXX7xbIfEGWMTDpwu0nBBRcsEFrVo7fhrATfj65EGIG9IP1G	PROFESSOR	t
-1	Henrique Fontoura Alves de Araújo	20221ITA01GB0006	$2b$10$JkykDqssvlaVJpBo6DgaH.W80zsdcInCH26TlYGnjO8qH6I/XFNpK	ESTUDANTE	t
 \.
 
 
@@ -1354,7 +1355,7 @@ COPY public.usuarios (id, nome, matricula_siape, senha_hash, tipo_usuario, prime
 -- Name: atividades_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.atividades_id_seq', 11, true);
+SELECT pg_catalog.setval('public.atividades_id_seq', 14, true);
 
 
 --
@@ -1363,7 +1364,7 @@ SELECT pg_catalog.setval('public.atividades_id_seq', 11, true);
 -- Name: comunicados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.comunicados_id_seq', 9, true);
+SELECT pg_catalog.setval('public.comunicados_id_seq', 13, true);
 
 
 --
@@ -1399,7 +1400,7 @@ SELECT pg_catalog.setval('public.horarios_aula_id_seq', 85, true);
 -- Name: materiais_aula_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.materiais_aula_id_seq', 5, true);
+SELECT pg_catalog.setval('public.materiais_aula_id_seq', 7, true);
 
 
 --
@@ -1417,7 +1418,7 @@ SELECT pg_catalog.setval('public.matriculas_id_seq', 383, true);
 -- Name: submissoes_avaliacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.submissoes_avaliacoes_id_seq', 1, true);
+SELECT pg_catalog.setval('public.submissoes_avaliacoes_id_seq', 4, true);
 
 
 --
@@ -1763,11 +1764,11 @@ ALTER TABLE ONLY public.tarefas_privadas
     ADD CONSTRAINT tarefas_privadas_estudante_id_fkey FOREIGN KEY (estudante_id) REFERENCES public.estudantes(usuario_id) ON DELETE CASCADE;
 
 
--- Completed on 2026-07-22 01:48:03
+-- Completed on 2026-07-22 02:44:28
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict zsMTyzHAzMGer8qpymHNfkXCl7pgIxarAZwkESKtfo16x4eHyCNGy8ObkxPJHh0
+\unrestrict yt3UmxtcLBs5ZssTI8lHoStePPV0afsPrALNR8zZiaIp5pJF5u1jGiyUVF7IWO5
 
