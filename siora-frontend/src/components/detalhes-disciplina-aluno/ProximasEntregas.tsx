@@ -1,4 +1,4 @@
-import { CheckCircle, Paperclip } from '@phosphor-icons/react';
+import { CheckCircle, Paperclip, LockSimple } from '@phosphor-icons/react';
 import type { Avaliacao, SubmissaoAluno } from '../../types/detalhesDisciplinaAluno';
 
 interface ProximasEntregasProps {
@@ -44,14 +44,23 @@ export function ProximasEntregas({
           {avaliacoes.map((entrega, index) => {
             const tagTempoStr = calcularDiasRestantes(entrega.data_vencimento);
             const ehUrgente = tagTempoStr.includes('1') || tagTempoStr.includes('hoje');
+            const ehVencido = tagTempoStr === 'Vencido';
             const statusSubmissao = submissoes[entrega.id];
+
+            // Trava de segurança: Se possui nota atribuída, o envio/substituição é bloqueado.
+            const possuiNota =
+              statusSubmissao?.submissao?.nota !== null &&
+              statusSubmissao?.submissao?.nota !== undefined;
+
+            // Envio/substituição bloqueados se houver nota atribuída OU se o prazo tiver expirado
+            const bloqueadoParaEnvio = possuiNota || ehVencido;
 
             return (
               <div key={entrega.id} className="flex gap-4 relative">
                 <div className="flex flex-col items-center relative">
                   <div
                     className={`w-2.5 h-2.5 rounded-full z-10 mt-1.5 ${
-                      ehUrgente ? 'bg-red-500' : 'bg-slate-300'
+                      ehVencido ? 'bg-slate-400' : ehUrgente ? 'bg-red-500' : 'bg-slate-300'
                     }`}
                   ></div>
                   {index !== avaliacoes.length - 1 && (
@@ -70,7 +79,11 @@ export function ProximasEntregas({
                   <div className="flex gap-2 mb-3">
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                        ehUrgente ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+                        ehVencido
+                          ? 'bg-slate-100 text-slate-500'
+                          : ehUrgente
+                          ? 'bg-red-100 text-red-600'
+                          : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {tagTempoStr}
@@ -92,33 +105,48 @@ export function ProximasEntregas({
                           </span>
                         </div>
 
-                        <label className="text-siora-blue font-semibold cursor-pointer hover:underline text-[11px]">
-                          Substituir arquivo
-                          <input
-                            type="file"
-                            className="hidden"
-                            onChange={(e) => onFileUpload(entrega.id, e)}
-                          />
-                        </label>
+                        {/* Exibe opção de substituição apenas se a entrega estiver aberta */}
+                        {!bloqueadoParaEnvio ? (
+                          <label className="text-siora-blue font-semibold cursor-pointer hover:underline text-[11px]">
+                            Substituir arquivo
+                            <input
+                              type="file"
+                              accept="*"
+                              className="hidden"
+                              onChange={(e) => onFileUpload(entrega.id, e)}
+                            />
+                          </label>
+                        ) : (
+                          <span className="text-slate-400 font-medium text-[11px] flex items-center gap-1">
+                            <LockSimple size={12} /> Submissão Bloqueada
+                          </span>
+                        )}
                       </div>
 
-                      {statusSubmissao.submissao?.nota !== null &&
-                      statusSubmissao.submissao?.nota !== undefined ? (
+                      {possuiNota ? (
                         <div className="mt-1 pt-2 border-t border-slate-200/60 flex items-center justify-between">
                           <span className="text-slate-500 font-medium">
                             Nota atribuída pelo professor:
                           </span>
                           <span className="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-md text-xs">
-                            {Number(statusSubmissao.submissao.nota).toFixed(1)} / {Number(entrega.peso).toFixed(1)}
+                            {Number(statusSubmissao.submissao!.nota).toFixed(1)} / {Number(entrega.peso).toFixed(1)}
                           </span>
                         </div>
                       ) : (
                         <div className="mt-1 pt-1.5 border-t border-slate-200/60 text-[11px] text-slate-400 italic">
-                          Aguardando correção do professor.
+                          {ehVencido
+                            ? 'Prazo encerrado. Aguardando correção.'
+                            : 'Aguardando correção do professor.'}
                         </div>
                       )}
                     </div>
+                  ) : ehVencido ? (
+                    /* Exibe aviso de bloqueio quando o prazo venceu sem submissão */
+                    <div className="bg-slate-100 border border-slate-200 text-slate-500 rounded-lg py-2.5 px-4 text-xs flex items-center justify-center gap-2 font-medium">
+                      <LockSimple size={16} /> Prazo de entrega encerrado
+                    </div>
                   ) : (
+                    /* Botão de envio habilitado */
                     <label
                       className={`w-full flex items-center justify-center gap-2 bg-siora-blue hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg text-xs cursor-pointer transition-colors shadow-sm ${
                         enviandoId === entrega.id ? 'opacity-50' : ''

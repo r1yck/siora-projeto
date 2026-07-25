@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Eye, EyeSlash } from '@phosphor-icons/react';
+import { Eye, EyeSlash, Question } from '@phosphor-icons/react';
 import { LoginSideBanner } from '../components/LoginSideBanner';
 import { LoginFooter } from '../components/LoginFooter';
 import { PrimeiroAcessoModal } from '../components/PrimeiroAcessoModal';
@@ -18,6 +18,9 @@ export function Login() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
+
+  // Estado para controle da Modal de Suporte / Esqueci a Senha
+  const [mostrarModalSuporte, setMostrarModalSuporte] = useState(false);
 
   const [mostrarModalPrimeiroAcesso, setMostrarModalPrimeiroAcesso] = useState(false);
   const [usuarioPendente, setUsuarioPendente] = useState<Usuario | null>(null);
@@ -168,12 +171,23 @@ export function Login() {
                   {erro}
                 </p>
               )}
+
+              {/* Botão sutil de recuperação de senha */}
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={() => setMostrarModalSuporte(true)}
+                  className="text-xs text-siora-blue hover:underline font-medium transition-colors cursor-pointer"
+                >
+                  Esqueceu sua senha?
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={carregando}
-              className="w-full mt-2 bg-siora-blue hover:bg-blue-700 text-white font-medium py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-sm disabled:opacity-50"
+              className="w-full mt-2 bg-siora-blue hover:bg-blue-700 text-white font-medium py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-sm disabled:opacity-50 cursor-pointer"
             >
               {carregando ? 'Autenticando...' : 'Acessar Sistema'}
             </button>
@@ -195,6 +209,50 @@ export function Login() {
         carregandoModal={carregandoModal}
         onSubmit={handleRedefinirSenha}
       />
+
+      {mostrarModalSuporte && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-slate-100 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+            
+            <div className="w-12 h-12 bg-blue-50 text-siora-blue rounded-full flex items-center justify-center mb-3">
+              <Question size={28} weight="bold" />
+            </div>
+
+            <h3 className="text-lg font-bold text-slate-800 mb-2">
+              Recuperação de Acesso
+            </h3>
+
+            <p className="text-xs text-slate-500 leading-relaxed mb-4">
+              Para solicitar a redefinição da sua senha para a senha padrão do sistema, entre em contato diretamente com o suporte do desenvolvedor.
+            </p>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left w-full text-xs text-slate-600 mb-5 flex flex-col gap-2">
+              <p className="font-semibold text-slate-700">
+                📧 E-mail do Suporte:
+              </p>
+              <a 
+                href="mailto:henriquearaujoa5378@gmail.com?subject=Solicitação de Reset de Senha - SIORA"
+                className="text-siora-blue font-bold hover:underline bg-white p-2 rounded border border-slate-200 text-center block text-sm"
+              >
+                henriquearaujoa5378@gmail.com
+              </a>
+
+              <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-slate-500 leading-relaxed">
+                <strong>⚠️ Importante para sua segurança:</strong> No e-mail, informe seu <u>Nome Completo</u>, <u>Matrícula/SIAPE</u> e <u>Data de Nascimento</u> para validação da identidade antes do reset.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMostrarModalSuporte(false)}
+              className="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-lg text-xs transition-colors cursor-pointer"
+            >
+              Entendi
+            </button>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

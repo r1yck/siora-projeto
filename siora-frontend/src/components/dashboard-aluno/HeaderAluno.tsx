@@ -13,7 +13,7 @@ export function HeaderAluno({ primeiroNome, semestreAtual, onLogout }: HeaderAlu
       <img
         src={iconSiora}
         alt="Logo SIORA"
-        onClick={() => (window.location.href = '/')}
+        onClick={() => (window.location.href = '/dashboard-aluno')}
         className="w-10 h-10 object-contain cursor-pointer hover:opacity-80 transition-opacity"
       />
       {semestreAtual && (

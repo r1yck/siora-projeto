@@ -46,6 +46,7 @@ export const getHorariosByAlunoId = async (usuarioId: number) => {
     WHERE e.usuario_id = $1
     ORDER BY 
       CASE UPPER(ha.dia_semana)
+      
         WHEN 'SEGUNDA-FEIRA' THEN 1
         WHEN 'TERÇA-FEIRA'   THEN 2
         WHEN 'QUARTA-FEIRA'  THEN 3
