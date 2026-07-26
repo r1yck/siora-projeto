@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { HeaderProfessor } from '../components/dashboard-professor/HeaderProfessor';
 import { TurmaCard } from '../components/dashboard-professor/TurmaCard';
 import type { Turma, User } from '../types/professor';
@@ -29,8 +29,8 @@ export function DashboardProfessor() {
     async function fetchTurmas() {
       try {
         setCarregando(true);
-        const response = await axios.get<Turma[]>(
-          `http://localhost:3000/api/dashboard/professor/${userId}/turmas`
+        const response = await api.get<Turma[]>(
+          `/api/dashboard/professor/${userId}/turmas`
         );
         setTurmas(response.data || []);
       } catch (err) {

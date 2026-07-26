@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { Warning, CaretRight } from '@phosphor-icons/react';
-
 import { HeaderAluno } from '../components/dashboard-aluno/HeaderAluno';
 import { MuralAvisos } from '../components/detalhes-disciplina-aluno/MuralAvisos';
 import { MateriaisAula } from '../components/detalhes-disciplina-aluno/MateriaisAula';
@@ -41,7 +40,7 @@ export function DetalhesDisciplinaAluno() {
     async function fetchDadosDisciplina() {
       try {
         setCarregando(true);
-        const response = await axios.get(`http://localhost:3000/api/dashboard/disciplina/${id}`);
+        const response = await api.get(`/api/dashboard/disciplina/${id}`);
 
         if (response.data) {
           setInfo(response.data.info || null);
@@ -53,8 +52,8 @@ export function DetalhesDisciplinaAluno() {
 
           listaAvaliacoes.forEach(async (av: Avaliacao) => {
             try {
-              const resSubmissao = await axios.get(
-                `http://localhost:3000/api/avaliacoes/${av.id}/estudante/${userId}`
+              const resSubmissao = await api.get(
+                `/api/avaliacoes/${av.id}/estudante/${userId}`
               );
               setSubmissoes((prev) => ({
                 ...prev,
@@ -90,8 +89,8 @@ export function DetalhesDisciplinaAluno() {
 
     try {
       setEnviandoId(avaliacaoId);
-      const res = await axios.post(
-        `http://localhost:3000/api/avaliacoes/${avaliacaoId}/submeter`,
+      const res = await api.post(
+        `/api/avaliacoes/${avaliacaoId}/submeter`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

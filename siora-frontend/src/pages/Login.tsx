@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Eye, EyeSlash, Question } from '@phosphor-icons/react';
 import { LoginSideBanner } from '../components/LoginSideBanner';
 import { LoginFooter } from '../components/LoginFooter';
 import { PrimeiroAcessoModal } from '../components/PrimeiroAcessoModal';
+import axios from 'axios';
 
 type Usuario = {
   id?: number | string;
@@ -49,7 +50,7 @@ export function Login() {
     setCarregando(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/login', {
+      const response = await api.post('/api/login', {
         matricula,
         senha
       });
@@ -97,7 +98,7 @@ export function Login() {
     setCarregandoModal(true);
 
     try {
-      const response = await axios.patch('http://localhost:3000/api/primeiro-acesso', {
+      const response = await api.patch('/api/primeiro-acesso', {
         userId: usuarioPendente.id,
         novaSenha
       });

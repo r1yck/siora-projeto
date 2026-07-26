@@ -73,7 +73,7 @@ export function SubmissoesModal({
                       </span>
                     </div>
                     <a
-                      href={`http://localhost:3000${sub.url_arquivo}`}
+                      href={`https://siora-backend.onrender.com${sub.url_arquivo}`}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs text-siora-blue font-bold hover:underline mt-2 bg-blue-50 px-2.5 py-1 rounded-md"

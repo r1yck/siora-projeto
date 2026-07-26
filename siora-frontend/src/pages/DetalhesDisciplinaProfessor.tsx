@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { CaretRight } from '@phosphor-icons/react';
 
 import { HeaderProfessor } from '../components/dashboard-professor/HeaderProfessor';
@@ -61,7 +61,7 @@ export function DetalhesDisciplinaProfessor() {
     async function carregarDadosCompletos() {
       try {
         setCarregando(true);
-        const response = await axios.get(`http://localhost:3000/api/dashboard/disciplina/${id}`);
+        const response = await api.get(`/api/dashboard/disciplina/${id}`);
         if (response.data) {
           setInfo(response.data.info || null);
           setComunicados(response.data.comunicados || []);
@@ -82,7 +82,7 @@ export function DetalhesDisciplinaProfessor() {
 
   async function atualizarDadosLocais() {
     try {
-      const response = await axios.get(`http://localhost:3000/api/dashboard/disciplina/${id}`);
+      const response = await api.get(`/api/dashboard/disciplina/${id}`);
       if (response.data) {
         setComunicados(response.data.comunicados || []);
         setAvaliacoes(response.data.avaliacoes || []);
@@ -105,7 +105,7 @@ export function DetalhesDisciplinaProfessor() {
     setCarregandoSubmissoes(true);
 
     try {
-      const res = await axios.get(`http://localhost:3000/api/avaliacoes/${avaliacao.id}/submissoes`);
+      const res = await api.get(`/api/avaliacoes/${avaliacao.id}/submissoes`);
       const listaSubmissoes: SubmissaoAluno[] = res.data.submissoes || [];
       setSubmissoes(listaSubmissoes);
 
@@ -137,7 +137,7 @@ export function DetalhesDisciplinaProfessor() {
 
     try {
       setSalvandoNotaId(submissaoId);
-      await axios.patch(`http://localhost:3000/api/submissoes/${submissaoId}/nota`, {
+      await api.patch(`/api/submissoes/${submissaoId}/nota`, {
         nota: notaNum,
       });
 
@@ -156,7 +156,7 @@ export function DetalhesDisciplinaProfessor() {
   async function handleDeletarComunicado(comunicadoId: number) {
     if (!confirm('Deseja realmente remover este aviso?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/dashboard/professor/comunicado/${comunicadoId}`);
+      await api.delete(`/api/dashboard/professor/comunicado/${comunicadoId}`);
       setComunicados((prev) => prev.filter((c) => c.id !== comunicadoId));
     } catch (err) {
       console.error(err);
@@ -167,7 +167,7 @@ export function DetalhesDisciplinaProfessor() {
   async function handleDeletarAvaliacao(avaliacaoId: number) {
     if (!confirm('Deseja realmente remover esta atividade?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/dashboard/professor/avaliacao/${avaliacaoId}`);
+      await api.delete(`/api/dashboard/professor/avaliacao/${avaliacaoId}`);
       setAvaliacoes((prev) => prev.filter((a) => a.id !== avaliacaoId));
     } catch (err) {
       console.error(err);
@@ -178,7 +178,7 @@ export function DetalhesDisciplinaProfessor() {
   async function handleDeletarMaterial(materialId: number) {
     if (!confirm('Deseja realmente remover este material de aula?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/dashboard/professor/material/${materialId}`);
+      await api.delete(`/api/dashboard/professor/material/${materialId}`);
       setMateriais((prev) => prev.filter((m) => m.id !== materialId));
     } catch (err) {
       console.error(err);
@@ -189,7 +189,7 @@ export function DetalhesDisciplinaProfessor() {
   async function handleAtualizarLocalizacao() {
     if (!novaSala.trim()) return alert('Digite o local ou laboratório!');
     try {
-      await axios.patch('http://localhost:3000/api/dashboard/professor/localizacao', {
+      await api.patch('/api/dashboard/professor/localizacao', {
         disciplina_id: Number(id),
         laboratorio: novaSala,
       });
@@ -205,7 +205,7 @@ export function DetalhesDisciplinaProfessor() {
   async function handlePublicarMural() {
     if (!conteudoMural.trim()) return alert('Escreva o texto do comunicado!');
     try {
-      await axios.post('http://localhost:3000/api/dashboard/professor/comunicado', {
+      await api.post('/api/dashboard/professor/comunicado', {
         disciplina_id: Number(id),
         titulo: 'Aviso',
         conteudo: conteudoMural,
@@ -222,7 +222,7 @@ export function DetalhesDisciplinaProfessor() {
     if (!nomeAtividade || !dataVencimento || !pesoValor)
       return alert('Preencha todos os campos!');
     try {
-      await axios.post('http://localhost:3000/api/dashboard/professor/avaliacao', {
+      await api.post('/api/dashboard/professor/avaliacao', {
         disciplina_id: Number(id),
         titulo: nomeAtividade,
         descricao: 'Submissão via portal.',
@@ -248,7 +248,7 @@ export function DetalhesDisciplinaProfessor() {
     formData.append('file', arquivo);
 
     try {
-      await axios.post('http://localhost:3000/api/dashboard/professor/material', formData, {
+      await api.post('/api/dashboard/professor/material', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert(`Upload de "${arquivo.name}" concluído com sucesso!`);

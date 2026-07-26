@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { HeaderAluno } from '../components/dashboard-aluno/HeaderAluno';
 import { DisciplinaCard } from '../components/dashboard-aluno/DisciplinaCard';
 import { PrazosAcademicosSection } from '../components/dashboard-aluno/PrazosAcademicosSection';
@@ -39,8 +39,8 @@ export function DashboardAluno() {
     async function fetchDadosDashboard() {
       try {
         const [respDisciplinas, respHorarios] = await Promise.all([
-          axios.get(`http://localhost:3000/api/dashboard/aluno/${userId}/disciplinas`),
-          axios.get(`http://localhost:3000/api/dashboard/aluno/${userId}/horarios`),
+          api.get(`/api/dashboard/aluno/${userId}/disciplinas`),
+          api.get(`/api/dashboard/aluno/${userId}/horarios`),
         ]);
 
         setDisciplinas(respDisciplinas.data);
@@ -68,7 +68,7 @@ export function DashboardAluno() {
     async function fetchCalendarioEMetas() {
       setCarregandoCalendario(true);
       try {
-        const response = await axios.get(`http://localhost:3000/api/dashboard/calendario`, {
+        const response = await api.get(`/api/dashboard/calendario`, {
           params: { usuario_id: userId },
         });
         setPrazos(response.data.prazos || []);
@@ -93,7 +93,7 @@ export function DashboardAluno() {
     if (!novaMetaDescricao.trim() || !userId) return;
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/dashboard/tarefas`, {
+      const response = await api.post(`/api/dashboard/tarefas`, {
         usuario_id: userId,
         descricao: novaMetaDescricao,
       });
@@ -108,12 +108,9 @@ export function DashboardAluno() {
 
   async function handleToggleMeta(id: number) {
     try {
-      const response = await axios.patch(
-        `http://localhost:3000/api/dashboard/tarefas/${id}/toggle`,
-        {
-          usuario_id: userId,
-        }
-      );
+      const response = await api.patch(`/api/dashboard/tarefas/${id}/toggle`, {
+        usuario_id: userId,
+      });
       setMetas((prev) =>
         prev.map((m) => (m.id === id ? { ...m, concluida: response.data.concluida } : m))
       );
@@ -124,7 +121,7 @@ export function DashboardAluno() {
 
   async function handleDeleteMeta(id: number) {
     try {
-      await axios.delete(`http://localhost:3000/api/dashboard/tarefas/${id}`, {
+      await api.delete(`/api/dashboard/tarefas/${id}`, {
         data: { usuario_id: userId },
       });
       setMetas((prev) => prev.filter((m) => m.id !== id));

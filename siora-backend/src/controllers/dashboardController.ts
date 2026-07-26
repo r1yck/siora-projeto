@@ -225,7 +225,7 @@ export const postMaterialDocente = async (req: Request, res: Response) => {
       tamanhoFormatado = `${(tamanhoEmBytes / (1024 * 1024)).toFixed(1)} MB`;
     }
 
-    const urlCaminho = `http://localhost:3000/files/${file.filename}`;
+    const urlCaminho = `https://siora-backend.onrender.com/files/${file.filename}`;
 
     const novoMaterial = await dashboardModel.createMaterialAula(
       Number(disciplina_id),
