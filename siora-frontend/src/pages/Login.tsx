@@ -124,88 +124,87 @@ export function Login() {
   }
 
   return (
-    <div className="w-full h-screen grid grid-cols-1 md:grid-cols-2 bg-slate-50 md:bg-white text-siora-dark relative overflow-hidden">
-      <LoginSideBanner />
+  <div className="w-full h-[100dvh] grid grid-cols-1 md:grid-cols-2 bg-slate-50 md:bg-white text-siora-dark relative overflow-hidden">
+    <LoginSideBanner />
 
-      <div className="flex flex-col justify-between items-center p-4 sm:p-8 bg-slate-50 md:bg-white relative w-full h-full overflow-y-auto md:overflow-hidden">
+    <div className="flex flex-col justify-between items-center px-4 py-3 sm:p-8 bg-slate-50 md:bg-white relative w-full h-[100dvh] md:h-full overflow-hidden">
+      
+      {/* Container Centralizado do Card */}
+      <div className="w-full max-w-md my-auto flex flex-col items-center z-10 bg-white md:bg-transparent p-4 sm:p-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200/80 md:border-none">
         
-        {/* Card Centralizado Compacto */}
-        <div className="w-full max-w-md my-auto flex flex-col items-center z-10 bg-white md:bg-transparent p-5 sm:p-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200/80 md:border-none">
-          
-          {/* Somente o Ícone do SIORA no Mobile (sem o texto duplicado) */}
-          <div className="flex md:hidden items-center justify-center mb-3">
-            <img src={iconSiora} alt="Logo SIORA" className="w-10 h-10 object-contain" />
-          </div>
-
-          <div className="text-center mb-4 sm:mb-8">
-            <h2 className="text-xl sm:text-3xl font-bold text-siora-dark mb-1 sm:mb-3 tracking-tight">
-              Bem-vindo ao SIORA
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
-              Insira suas credenciais institucionais para acessar seus diários.
-            </p>
-          </div>
-
-          <form onSubmit={handleLogin} className="w-full flex flex-col gap-3 sm:gap-4">
-            <div className="w-full">
-              <input
-                type="text"
-                placeholder="Sua Matrícula ou SIAPE"
-                value={matricula}
-                onChange={(e) => setMatricula(e.target.value)}
-                required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 sm:py-3.5 px-4 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all"
-              />
-            </div>
-
-            <div className="w-full relative">
-              <input
-                type={mostrarSenha ? "text" : "password"}
-                placeholder="Sua Senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 sm:py-3.5 px-4 pr-12 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
-              />
-
-              <button
-                type="button"
-                onClick={() => setMostrarSenha(!mostrarSenha)}
-                className="absolute right-4 top-2.5 sm:top-3.5 text-slate-400 hover:text-siora-blue transition-colors focus:outline-none"
-              >
-                {mostrarSenha ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
-              </button>
-
-              {erro && (
-                <p className="text-red-500 text-xs font-semibold mt-1.5 pl-1 animate-pulse">
-                  {erro}
-                </p>
-              )}
-
-              {/* Botão sutil de recuperação de senha */}
-              <div className="flex justify-end mt-1.5">
-                <button
-                  type="button"
-                  onClick={() => setMostrarModalSuporte(true)}
-                  className="text-xs text-siora-blue hover:underline font-medium transition-colors cursor-pointer"
-                >
-                  Esqueceu sua senha?
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={carregando}
-              className="w-full mt-1 bg-siora-blue hover:bg-blue-700 text-white font-medium py-3 sm:py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-sm disabled:opacity-50 cursor-pointer"
-            >
-              {carregando ? 'Autenticando...' : 'Acessar Sistema'}
-            </button>
-          </form>
+        {/* Ícone verde compacto no mobile */}
+        <div className="flex md:hidden items-center justify-center mb-2">
+          <img src={iconSiora} alt="Logo SIORA" className="w-9 h-9 object-contain" />
         </div>
 
-        <LoginFooter />
+        <div className="text-center mb-3 sm:mb-8">
+          <h2 className="text-lg sm:text-3xl font-bold text-siora-dark mb-1 sm:mb-3 tracking-tight">
+            Bem-vindo ao SIORA
+          </h2>
+          <p className="text-[11px] sm:text-sm text-slate-500 font-medium leading-tight sm:leading-relaxed">
+            Insira suas credenciais institucionais para acessar seus diários.
+          </p>
+        </div>
+
+        <form onSubmit={handleLogin} className="w-full flex flex-col gap-2.5 sm:gap-4">
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="Sua Matrícula ou SIAPE"
+              value={matricula}
+              onChange={(e) => setMatricula(e.target.value)}
+              required
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 sm:py-3.5 px-3.5 text-xs sm:text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all"
+            />
+          </div>
+
+          <div className="w-full relative">
+            <input
+              type={mostrarSenha ? "text" : "password"}
+              placeholder="Sua Senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 sm:py-3.5 px-3.5 pr-10 text-xs sm:text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
+            />
+
+            <button
+              type="button"
+              onClick={() => setMostrarSenha(!mostrarSenha)}
+              className="absolute right-3 top-2 sm:top-3.5 text-slate-400 hover:text-siora-blue transition-colors focus:outline-none"
+            >
+              {mostrarSenha ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
+            </button>
+
+            {erro && (
+              <p className="text-red-500 text-[11px] font-semibold mt-1 pl-1 animate-pulse">
+                {erro}
+              </p>
+            )}
+
+            <div className="flex justify-end mt-1">
+              <button
+                type="button"
+                onClick={() => setMostrarModalSuporte(true)}
+                className="text-[11px] text-siora-blue hover:underline font-medium transition-colors cursor-pointer"
+              >
+                Esqueceu sua senha?
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={carregando}
+            className="w-full mt-0.5 bg-siora-blue hover:bg-blue-700 text-white font-medium py-2.5 sm:py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
+          >
+            {carregando ? 'Autenticando...' : 'Acessar Sistema'}
+          </button>
+        </form>
       </div>
+
+      <LoginFooter />
+    </div>
 
       <PrimeiroAcessoModal
         mostrar={mostrarModalPrimeiroAcesso}
