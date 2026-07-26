@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { HeaderAluno } from '../components/dashboard-aluno/HeaderAluno';
 import { DisciplinaCard } from '../components/dashboard-aluno/DisciplinaCard';
@@ -9,6 +10,7 @@ import { GridHorarios } from '../components/dashboard-aluno/GridHorarios';
 import type { Disciplina, Horario, PrazoAcademico, MetaPrivada, User } from '../types/aluno';
 
 export function DashboardAluno() {
+  const navigate = useNavigate();
   const [abaAtiva, setAbaAtiva] = useState<'disciplinas' | 'calendario' | 'horarios'>('disciplinas');
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>([]);
   const [horarios, setHorarios] = useState<Horario[]>([]);
@@ -32,7 +34,7 @@ export function DashboardAluno() {
       (!user.id && !user.id_usuario && !user.matricula_siape) ||
       (perfilDoUsuario !== 'ESTUDANTE' && perfilDoUsuario !== 'ALUNO')
     ) {
-      window.location.href = '/login';
+      navigate('/login');
       return;
     }
 
@@ -60,7 +62,7 @@ export function DashboardAluno() {
     }
 
     fetchDadosDashboard();
-  }, [userId]);
+  }, [userId, navigate]);
 
   useEffect(() => {
     if (abaAtiva !== 'calendario' || !userId) return;
@@ -85,7 +87,7 @@ export function DashboardAluno() {
 
   function handleLogout() {
     localStorage.removeItem('@siora:user');
-    window.location.href = '/login';
+    navigate('/login');
   }
 
   async function handleAddMeta(e: React.FormEvent) {
@@ -138,10 +140,10 @@ export function DashboardAluno() {
         onLogout={handleLogout}
       />
 
-      <main className="max-w-[1200px] mx-auto px-6 py-12">
-        <section className="mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Suas Disciplinas</h1>
-          <p className="text-slate-500 text-sm font-medium">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <section className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">Suas Disciplinas</h1>
+          <p className="text-slate-500 text-xs sm:text-sm font-medium">
             Período Letivo Atual: 2026.1{' '}
             {disciplinas.length > 0 && disciplinas[0]?.semestre_atual
               ? `• ${disciplinas[0].semestre_atual}º Semestre`
@@ -149,53 +151,56 @@ export function DashboardAluno() {
           </p>
         </section>
 
-        <nav className="flex gap-1 bg-slate-100/80 p-1.5 rounded-lg w-max mb-10 border border-slate-200/60">
-          <button
-            onClick={() => setAbaAtiva('disciplinas')}
-            className={`${
-              abaAtiva === 'disciplinas'
-                ? 'bg-[#3B82F6] text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-            } px-8 py-2 rounded-md font-semibold text-sm transition-all`}
-          >
-            Disciplinas
-          </button>
-          <button
-            onClick={() => setAbaAtiva('calendario')}
-            className={`${
-              abaAtiva === 'calendario'
-                ? 'bg-[#3B82F6] text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-            } px-8 py-2 rounded-md font-semibold text-sm transition-all`}
-          >
-            Calendário / Metas
-          </button>
-          <button
-            onClick={() => setAbaAtiva('horarios')}
-            className={`${
-              abaAtiva === 'horarios'
-                ? 'bg-[#3B82F6] text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-            } px-8 py-2 rounded-md font-semibold text-sm transition-all`}
-          >
-            Meus Horários
-          </button>
-        </nav>
+        {/* Barra de Navegação com Scroll Horizontal Limpo no Mobile */}
+        <div className="w-full overflow-x-auto no-scrollbar mb-8">
+          <nav className="flex gap-1 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60 w-max min-w-full sm:min-w-0">
+            <button
+              onClick={() => setAbaAtiva('disciplinas')}
+              className={`${
+                abaAtiva === 'disciplinas'
+                  ? 'bg-[#3B82F6] text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+            >
+              Disciplinas
+            </button>
+            <button
+              onClick={() => setAbaAtiva('calendario')}
+              className={`${
+                abaAtiva === 'calendario'
+                  ? 'bg-[#3B82F6] text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+            >
+              Calendário / Metas
+            </button>
+            <button
+              onClick={() => setAbaAtiva('horarios')}
+              className={`${
+                abaAtiva === 'horarios'
+                  ? 'bg-[#3B82F6] text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+            >
+              Meus Horários
+            </button>
+          </nav>
+        </div>
 
         {carregando && abaAtiva === 'disciplinas' && (
-          <p className="text-slate-500 animate-pulse font-medium">
+          <p className="text-slate-500 animate-pulse font-medium text-sm">
             Carregando diários do banco de dados...
           </p>
         )}
 
         {!carregando && abaAtiva === 'disciplinas' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {Array.isArray(disciplinas) && disciplinas.length > 0 ? (
               disciplinas.map((disc) => (
                 <DisciplinaCard key={disc.disciplina_id} disciplina={disc} />
               ))
             ) : (
-              <div className="col-span-full bg-white border border-slate-200 rounded-xl p-8 text-center text-slate-500">
+              <div className="col-span-full bg-white border border-slate-200 rounded-xl p-6 sm:p-8 text-center text-slate-500 text-sm">
                 Nenhuma disciplina vinculada encontrada para este estudante no banco de dados.
               </div>
             )}
@@ -203,7 +208,7 @@ export function DashboardAluno() {
         )}
 
         {abaAtiva === 'calendario' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
             <PrazosAcademicosSection carregando={carregandoCalendario} prazos={prazos} />
             <MetasEstudoSection
               carregando={carregandoCalendario}

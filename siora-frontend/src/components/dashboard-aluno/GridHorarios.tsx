@@ -32,9 +32,9 @@ export function GridHorarios({ horarios }: GridHorariosProps) {
         return (
           <div
             key={aula.horario_id}
-            className="border border-slate-200 rounded-lg p-4 text-center bg-slate-50/50 hover:border-blue-300 transition-colors h-[125px] flex flex-col justify-center"
+            className="border border-slate-200 rounded-lg p-3 text-center bg-slate-50/50 hover:border-blue-300 transition-colors min-h-[115px] sm:h-[125px] flex flex-col justify-center"
           >
-            <span className="inline-block bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-1 rounded mb-2 w-max mx-auto">
+            <span className="inline-block bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded mb-1.5 w-max mx-auto">
               {aula.hora_inicio} - {aula.hora_fim}
             </span>
             <p className="text-[12px] font-bold text-slate-700 leading-snug mb-1 line-clamp-2">
@@ -50,7 +50,7 @@ export function GridHorarios({ horarios }: GridHorariosProps) {
       return (
         <div
           key={`livre-${slot.id}`}
-          className="border border-dashed border-slate-100 rounded-lg h-[125px] flex items-center justify-center bg-slate-50/20"
+          className="border border-dashed border-slate-100 rounded-lg min-h-[115px] sm:h-[125px] flex items-center justify-center bg-slate-50/20"
         >
           <p className="text-slate-300 text-[11px] italic">Livre</p>
         </div>
@@ -59,13 +59,23 @@ export function GridHorarios({ horarios }: GridHorariosProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start">
-      {diasDaSemana.map((dia) => (
-        <div key={dia} className="bg-white border border-slate-200 rounded-xl min-h-[500px] flex flex-col shadow-sm">
-          <h3 className="text-center font-bold text-slate-800 py-4 border-b border-slate-100">{dia}</h3>
-          <div className="p-3 flex flex-col gap-3">{renderHorariosDoDia(dia)}</div>
-        </div>
-      ))}
+    <div className="w-full overflow-x-auto no-scrollbar pb-4">
+      {/* Container flex no mobile com min-w para os dias não esmagarem, e grid no desktop */}
+      <div className="flex md:grid md:grid-cols-5 gap-3 sm:gap-4 items-start min-w-max md:min-w-0">
+        {diasDaSemana.map((dia) => (
+          <div
+            key={dia}
+            className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-sm w-[240px] sm:w-[260px] md:w-auto flex-shrink-0 md:flex-shrink"
+          >
+            <h3 className="text-center font-bold text-xs sm:text-sm text-slate-800 py-3 border-b border-slate-100">
+              {dia}
+            </h3>
+            <div className="p-2.5 sm:p-3 flex flex-col gap-2.5 sm:gap-3">
+              {renderHorariosDoDia(dia)}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

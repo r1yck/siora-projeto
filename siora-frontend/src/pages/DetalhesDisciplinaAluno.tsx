@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Warning, CaretRight } from '@phosphor-icons/react';
 import { HeaderAluno } from '../components/dashboard-aluno/HeaderAluno';
@@ -17,6 +17,7 @@ import type {
 
 export function DetalhesDisciplinaAluno() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [info, setInfo] = useState<InfoDisciplina | null>(null);
   const [materiais, setMateriais] = useState<MaterialAula[]>([]);
@@ -33,7 +34,7 @@ export function DetalhesDisciplinaAluno() {
 
   useEffect(() => {
     if (!userString || !userId) {
-      window.location.href = '/login';
+      navigate('/login');
       return;
     }
 
@@ -74,7 +75,7 @@ export function DetalhesDisciplinaAluno() {
     if (id) {
       fetchDadosDisciplina();
     }
-  }, [id, userId, userString]);
+  }, [id, userId, userString, navigate]);
 
   async function handleFileUpload(
     avaliacaoId: number,
@@ -112,10 +113,15 @@ export function DetalhesDisciplinaAluno() {
     }
   }
 
+  function handleLogout() {
+    localStorage.removeItem('@siora:user');
+    navigate('/login');
+  }
+
   if (carregando) {
     return (
-      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center font-sans">
-        <p className="text-slate-500 animate-pulse font-medium">
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center font-sans p-4">
+        <p className="text-slate-500 animate-pulse font-medium text-sm">
           Carregando conteúdos da disciplina...
         </p>
       </div>
@@ -124,8 +130,10 @@ export function DetalhesDisciplinaAluno() {
 
   if (!info) {
     return (
-      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center font-sans">
-        <p className="text-red-500 font-medium">Disciplina não encontrada no banco de dados.</p>
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center font-sans p-4">
+        <p className="text-red-500 font-medium text-sm text-center">
+          Disciplina não encontrada no banco de dados.
+        </p>
       </div>
     );
   }
@@ -138,38 +146,45 @@ export function DetalhesDisciplinaAluno() {
       <HeaderAluno
         primeiroNome={primeiroNome}
         semestreAtual={Number(localStorage.getItem('@siora:semestre_atual') || 1)}
-        onLogout={() => {
-          localStorage.removeItem('@siora:user');
-          window.location.href = '/login';
-        }}
+        onLogout={handleLogout}
       />
 
-      <main className="max-w-[1200px] mx-auto px-6 py-8">
-        <nav className="flex items-center gap-2 text-sm font-medium mb-6">
-          <a
-            href="/dashboard-aluno"
-            className="text-slate-400 hover:text-blue-500 transition-colors"
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Breadcrumb com Link do React Router e Flex Wrap */}
+        <nav className="flex items-center flex-wrap gap-1.5 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+          <Link
+            to="/dashboard-aluno"
+            className="text-slate-400 hover:text-blue-500 transition-colors whitespace-nowrap"
           >
             Suas Disciplinas
-          </a>
-          <CaretRight size={14} className="text-slate-400" />
-          <span className="text-blue-500">{info.nome}</span>
+          </Link>
+          <CaretRight size={12} className="text-slate-400 flex-shrink-0" />
+          <span className="text-blue-500 font-semibold truncate max-w-[200px] sm:max-w-none">
+            {info.nome}
+          </span>
         </nav>
 
+        {/* Banner Urgente Adaptável para Telas Pequenas */}
         {comunicadoUrgente && (
-          <div className="bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] px-4 py-3 rounded-lg flex items-center justify-center gap-2 font-semibold text-sm mb-8 shadow-sm animate-pulse">
-            <Warning size={18} weight="bold" className="text-[#D97706]" />
-            {comunicadoUrgente.titulo}: {comunicadoUrgente.conteudo}
+          <div className="bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] px-3.5 py-3 rounded-xl flex items-start sm:items-center gap-2.5 font-medium text-xs sm:text-sm mb-6 shadow-sm">
+            <Warning size={20} weight="bold" className="text-[#D97706] flex-shrink-0 mt-0.5 sm:mt-0" />
+            <div>
+              <span className="font-bold">{comunicadoUrgente.titulo}: </span>
+              {comunicadoUrgente.conteudo}
+            </div>
           </div>
         )}
 
-        <section className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-1">{info.nome}</h1>
-          <p className="text-slate-500 text-sm font-medium">
+        <section className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 leading-tight">
+            {info.nome}
+          </h1>
+          <p className="text-slate-500 text-xs sm:text-sm font-medium">
             Turma: {info.codigo_turma} • Prof. {info.professor_nome}
           </p>
         </section>
 
+        {/* Grid dos Módulos */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 flex flex-col gap-6">
             <MuralAvisos comunicados={comunicadosFiltados} />
