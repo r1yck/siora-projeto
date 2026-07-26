@@ -4,6 +4,7 @@ import { Eye, EyeSlash, Question } from '@phosphor-icons/react';
 import { LoginSideBanner } from '../components/LoginSideBanner';
 import { LoginFooter } from '../components/LoginFooter';
 import { PrimeiroAcessoModal } from '../components/PrimeiroAcessoModal';
+import iconSiora from '../assets/icon-siora.svg';
 import axios from 'axios';
 
 type Usuario = {
@@ -123,16 +124,23 @@ export function Login() {
   }
 
   return (
-    <div className="w-full h-screen grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-white text-siora-dark relative">
+    <div className="w-full min-h-screen md:h-screen grid grid-cols-1 md:grid-cols-2 bg-slate-50 md:bg-white text-siora-dark relative overflow-y-auto md:overflow-hidden">
       <LoginSideBanner />
 
-      <div className="flex flex-col justify-center items-center p-8 bg-white relative w-full h-full">
-        <div className="w-full max-w-md px-4 flex flex-col items-center z-10">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-siora-dark mb-3 tracking-tight">
+      <div className="flex flex-col justify-between items-center p-4 sm:p-8 bg-slate-50 md:bg-white relative w-full min-h-screen md:h-full">
+        <div className="w-full max-w-md my-auto flex flex-col items-center z-10 bg-white md:bg-transparent p-6 sm:p-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200/80 md:border-none">
+          
+          {/* Logo SIORA exclusiva para Mobile */}
+          <div className="flex md:hidden flex-col items-center gap-2 mb-6">
+            <img src={iconSiora} alt="Logo SIORA" className="w-12 h-12 object-contain" />
+            <span className="font-bold text-2xl tracking-tight text-slate-800">SIORA</span>
+          </div>
+
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-siora-dark mb-2 sm:mb-3 tracking-tight">
               Bem-vindo ao SIORA
             </h2>
-            <p className="text-sm text-slate-500 font-medium">
+            <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
               Insira suas credenciais institucionais para acessar seus diários.
             </p>
           </div>
@@ -145,7 +153,7 @@ export function Login() {
                 value={matricula}
                 onChange={(e) => setMatricula(e.target.value)}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3.5 px-4 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 sm:py-3.5 px-4 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all"
               />
             </div>
 
@@ -156,13 +164,13 @@ export function Login() {
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3.5 px-4 pr-12 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 sm:py-3.5 px-4 pr-12 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
               />
 
               <button
                 type="button"
                 onClick={() => setMostrarSenha(!mostrarSenha)}
-                className="absolute right-4 top-3.5 text-slate-400 hover:text-siora-blue transition-colors focus:outline-none"
+                className="absolute right-4 top-3 sm:top-3.5 text-slate-400 hover:text-siora-blue transition-colors focus:outline-none"
               >
                 {mostrarSenha ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
               </button>
@@ -188,7 +196,7 @@ export function Login() {
             <button
               type="submit"
               disabled={carregando}
-              className="w-full mt-2 bg-siora-blue hover:bg-blue-700 text-white font-medium py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-sm disabled:opacity-50 cursor-pointer"
+              className="w-full mt-2 bg-siora-blue hover:bg-blue-700 text-white font-medium py-3 sm:py-3.5 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-siora-blue text-sm disabled:opacity-50 cursor-pointer"
             >
               {carregando ? 'Autenticando...' : 'Acessar Sistema'}
             </button>
