@@ -22,8 +22,7 @@ jobs:
       - name: Realizar Dump do Banco Neon
         env:
           DB_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          pg_dump "$DB_URL" > "backup_$(date +%Y-%m-%d).sql"
+        run: /usr/lib/postgresql/18/bin/pg_dump "$DB_URL" > "backup_$(date +%Y-%m-%d).sql"
 
       - name: Salvar Backup como Artefato no GitHub
         uses: actions/upload-artifact@v4
