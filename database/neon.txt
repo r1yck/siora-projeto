@@ -1,0 +1,1 @@
+postgresql://neondb_owner:npg_Fa8lnTCR9EYA@ep-shy-forest-ayvglc1j.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require
