@@ -20,7 +20,7 @@ export const submeterTrabalho = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "ID do estudante é obrigatório." });
     }
 
-    const urlArquivo = `/uploads/${file.filename}`;
+    const urlArquivo = file.path;
     const nomeArquivo = file.originalname;
 
     const submissao = await salvarOuAtualizarSubmissao(
