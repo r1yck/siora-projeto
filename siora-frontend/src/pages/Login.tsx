@@ -50,9 +50,12 @@ export function Login() {
     setErro('');
     setCarregando(true);
 
+    // Trata a matrícula para garantir envio em maiúsculas sem espaços extras
+    const matriculaTratada = matricula.trim().toUpperCase();
+
     try {
       const response = await api.post('/api/login', {
-        matricula,
+        matricula: matriculaTratada,
         senha
       });
 
@@ -129,10 +132,10 @@ export function Login() {
 
       <div className="flex flex-col justify-between items-center px-4 py-3 sm:p-8 bg-slate-50 md:bg-white relative w-full h-[100dvh] md:h-full overflow-hidden">
         
-        {/* Card Centralizado com inputs GRANDES e margens/paddings compactados */}
+        {/* Card Centralizado */}
         <div className="w-full max-w-md my-auto flex flex-col items-center z-10 bg-white md:bg-transparent p-5 sm:p-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none border border-slate-200/80 md:border-none">
           
-          {/* Logo verde no topo sem o texto duplicado */}
+          {/* Logo mobile */}
           <div className="flex md:hidden items-center justify-center mb-2">
             <img src={iconSiora} alt="Logo SIORA" className="w-10 h-10 object-contain" />
           </div>
@@ -146,16 +149,16 @@ export function Login() {
             </p>
           </div>
 
-          {/* Form mantendo inputs grandes e confortáveis (py-3.5 e text-sm) */}
+          {/* Form */}
           <form onSubmit={handleLogin} className="w-full flex flex-col gap-3">
             <div className="w-full">
               <input
                 type="text"
                 placeholder="Sua Matrícula ou SIAPE"
                 value={matricula}
-                onChange={(e) => setMatricula(e.target.value)}
+                onChange={(e) => setMatricula(e.target.value.toUpperCase())}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 sm:py-3.5 px-4 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 sm:py-3.5 px-4 text-sm text-siora-dark focus:outline-none focus:ring-2 focus:ring-siora-blue/20 transition-all uppercase"
               />
             </div>
 

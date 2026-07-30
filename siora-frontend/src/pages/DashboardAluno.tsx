@@ -160,7 +160,7 @@ export function DashboardAluno() {
                 abaAtiva === 'disciplinas'
                   ? 'bg-[#3B82F6] text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
-              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap cursor-pointer`}
             >
               Disciplinas
             </button>
@@ -170,7 +170,7 @@ export function DashboardAluno() {
                 abaAtiva === 'calendario'
                   ? 'bg-[#3B82F6] text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
-              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap cursor-pointer`}
             >
               Calendário / Metas
             </button>
@@ -180,7 +180,7 @@ export function DashboardAluno() {
                 abaAtiva === 'horarios'
                   ? 'bg-[#3B82F6] text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
-              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap`}
+              } flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center whitespace-nowrap cursor-pointer`}
             >
               Meus Horários
             </button>
