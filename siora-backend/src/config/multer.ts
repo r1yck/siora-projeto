@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
     return {
       folder: 'siora_uploads',
       resource_type: isRaw ? 'raw' : 'auto',
-      public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
+      public_id: `${Date.now()}-${file.originalname}`,
     };
   },
 });

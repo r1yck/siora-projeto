@@ -1,5 +1,6 @@
 import { X, Paperclip, DownloadSimple, Check } from '@phosphor-icons/react';
 import type { Avaliacao, SubmissaoAluno } from '../../types/detalhesDisciplinaProfessor';
+import api from '../../services/api'; // Certifique-se de ajustar o caminho correto para o seu api.ts
 
 interface SubmissoesModalProps {
   modalAberta: boolean;
@@ -26,9 +27,14 @@ export function SubmissoesModal({
 }: SubmissoesModalProps) {
   if (!modalAberta || !avaliacaoSelecionada) return null;
 
+  // Obtém a URL base configurada no Axios
+  const baseURL = api.defaults.baseURL || 'https://siora-backend.onrender.com';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
+        
+        {/* Header do Modal */}
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
           <div>
             <h3 className="text-lg font-bold text-slate-800">
@@ -46,6 +52,7 @@ export function SubmissoesModal({
           </button>
         </div>
 
+        {/* Corpo do Modal */}
         <div className="p-6 overflow-y-auto flex-1">
           {carregandoSubmissoes ? (
             <p className="text-center text-slate-400 text-sm py-8 animate-pulse">
@@ -58,61 +65,69 @@ export function SubmissoesModal({
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {submissoes.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div className="flex-1">
-                    <strong className="text-sm text-slate-800 block mb-0.5">
-                      {sub.nome_aluno}
-                    </strong>
-                    <div className="flex items-center gap-3 text-xs text-slate-500">
-                      <span className="italic">
-                        Enviado em {new Date(sub.data_envio).toLocaleString('pt-BR')}
-                      </span>
-                    </div>
-                    <a
-                      href={`https://siora-backend.onrender.com${sub.url_arquivo}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs text-siora-blue font-bold hover:underline mt-2 bg-blue-50 px-2.5 py-1 rounded-md"
-                    >
-                      <DownloadSimple size={14} weight="bold" />
-                      Baixar {sub.nome_arquivo}
-                    </a>
-                  </div>
+              {submissoes.map((sub) => {
+                // Formatação dinâmica da URL completa do arquivo
+                const fileUrl = sub.url_arquivo.startsWith('http')
+                  ? sub.url_arquivo
+                  : `${baseURL}${sub.url_arquivo.startsWith('/') ? '' : '/'}${sub.url_arquivo}`;
 
-                  <div className="flex items-center gap-2 self-end md:self-center">
-                    <div className="flex flex-col items-end">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                        Nota do Aluno
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="0.0"
-                        value={notasInputs[sub.id] ?? ''}
-                        onChange={(e) =>
-                          setNotasInputs({ ...notasInputs, [sub.id]: e.target.value })
-                        }
-                        className="w-20 text-center bg-white border border-slate-300 rounded-lg py-1.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-siora-blue/20"
-                      />
+                return (
+                  <div
+                    key={sub.id}
+                    className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
+                    <div className="flex-1">
+                      <strong className="text-sm text-slate-800 block mb-0.5">
+                        {sub.nome_aluno}
+                      </strong>
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="italic">
+                          Enviado em {new Date(sub.data_envio).toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-siora-blue font-bold hover:underline mt-2 bg-blue-50 px-2.5 py-1 rounded-md"
+                      >
+                        <DownloadSimple size={14} weight="bold" />
+                        Baixar {sub.nome_arquivo}
+                      </a>
                     </div>
-                    <button
-                      onClick={() => onSalvarNota(sub.id)}
-                      disabled={salvandoNotaId === sub.id}
-                      className="mt-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-lg text-xs transition-colors shadow-sm disabled:opacity-50"
-                      title="Salvar Nota"
-                    >
-                      {salvandoNotaId === sub.id ? '...' : <Check size={16} weight="bold" />}
-                    </button>
+
+                    <div className="flex items-center gap-2 self-end md:self-center">
+                      <div className="flex flex-col items-end">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                          Nota do Aluno
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="0.0"
+                          value={notasInputs[sub.id] ?? ''}
+                          onChange={(e) =>
+                            setNotasInputs({ ...notasInputs, [sub.id]: e.target.value })
+                          }
+                          className="w-20 text-center bg-white border border-slate-300 rounded-lg py-1.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-siora-blue/20"
+                        />
+                      </div>
+                      <button
+                        onClick={() => onSalvarNota(sub.id)}
+                        disabled={salvandoNotaId === sub.id}
+                        className="mt-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-lg text-xs transition-colors shadow-sm disabled:opacity-50"
+                        title="Salvar Nota"
+                      >
+                        {salvandoNotaId === sub.id ? '...' : <Check size={16} weight="bold" />}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
 
+        {/* Footer do Modal */}
         <div className="px-6 py-3 border-t border-slate-100 flex justify-end bg-slate-50/50 rounded-b-2xl">
           <button
             onClick={onFecharModal}
